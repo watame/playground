@@ -1,0 +1,50 @@
+<!-- Angular Material の公式サイトを基に機能検証コンポーネントを作成 -->
+<!-- https://material.angular.io/components/table/examples -->
+
+<!-- フィルタ用のInputフィールド -->
+<mat-form-field>
+    <!-- keyupイベントを取得して、データにフィルタをかける -->
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+</mat-form-field>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <!--
+        テーブルのデータ読み込みのルール
+        ・dataSourceのプロパティ名で配列を作成する(displayedColumns)
+          -> ここに指定したプロパティ名を下記のRowDefに紐づけることで、全データをから1つずつ行データとして取得できる
+             RowDefには以下の条件がある
+                ・matHeaderRowDefのプロパティに指定した配列に含まれている要素を「全て」指定する
+                ・matRowDefで定義したcolumnsに含まれている要素を「全て」指定する
+                  -> ヘッダ、実データ共にdataSourceのプロパティをキーとするので、同一の配列を指定することになる(displayedColumns)
+    -->
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+        <!-- 構造ディレクティブでセルの情報を指定する -->
+        <th mat-header-cell *matHeaderCellDef> No. </th>
+        <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="weight">
+        <th mat-header-cell *matHeaderCellDef> Weight </th>
+        <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="symbol">
+        <th mat-header-cell *matHeaderCellDef> Symbol </th>
+        <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>
