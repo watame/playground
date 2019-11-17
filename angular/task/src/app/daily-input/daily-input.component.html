@@ -1,0 +1,22 @@
+<div fxLayout="column" fxLayoutGap="10px">
+    <mat-card fxFlex>
+        <mat-card-header>
+            <mat-card-title>作業入力</mat-card-title>
+            <mat-card-subtitle>1日の作業入力</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content fxLayout="column" fxLayoutGap="10px">
+            <p>作業年月日</p>
+            <ng2-flatpickr [config]="cal_options"></ng2-flatpickr>
+            <div fxFlex fxLayout="row" fxLayoutGap="10px">
+                <div>時刻</div>
+                <ng2-flatpickr [config]="time_options"></ng2-flatpickr>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <mat-card fxFlex>
+        <mat-card-header>
+            <mat-card-title>作業一覧</mat-card-title>
+            <mat-card-subtitle>これまでに入力した作業の一覧</mat-card-subtitle>
+        </mat-card-header>
+    </mat-card>
+</div>
