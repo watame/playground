@@ -11,4 +11,4 @@
 2. インストール済みの `qmk_firmware` ディレクトリに移動します
 3. `make helix:watame` でビルドします
 4. `qmk_firmware` ディレクトリに移動し、`.build`ディレクトリに`helix_rev2_watame.hex`が格納されていることを確認
-5. [QMK_ToolBox](https://github.com/qmk/qmk_toolbox/releases)を利用し、ファームウェアを*左右のキーボードそれぞれに*書き込む
+5. [QMK_ToolBox](https://github.com/qmk/qmk_toolbox/releases)を利用し、ファームウェアを**左右のキーボードそれぞれに**書き込む
