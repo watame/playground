@@ -5,15 +5,15 @@
 
 ```
  ,-----------------------------------------.             ,-----------------------------------------.
- |   `  |   1  |   2  |   3  |   4  |   5  |             |   6  |   7  |   8  |   9  |   0  | Del  |
+ |   `  |   1  |   2  |   3  |   4  |   5  |             |   6  |   7  |   8  |   9  |   0  |  -   |
  |------+------+------+------+------+------|             |------+------+------+------+------+------|
- | Tab  |   Q  |   W  |   E  |   R  |   T  |             |   Y  |   U  |   I  |   O  |   P  | Bksp |
+ | Tab  |   Q  |   W  |   E  |   R  |   T  |             |   Y  |   U  |   I  |   O  |   P  |  \   |
  |------+------+------+------+------+------|             |------+------+------+------+------+------|
  | Ctrl |   A  |   S  |   D  |   F  |   G  |             |   H  |   J  |   K  |   L  |   ;  |  '   |
  |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
- | Shift|   Z  |   X  |   C  |   V  |   B  |   [  |   ]  |   N  |   M  |   ,  |   .  |   /  |Enter |
+ | Shift|   Z  |   X  |   C  |   V  |   B  |   [  |   ]  |   N  |   M  |   ,  |   .  |   /  |  =   |
  |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
- |Adjust| Esc  | Alt  | GUI  | EISU |Lower |Space |Space |Raise | KANA | Left | Down |  Up  |Right |
+ | Del  | EISU | Alt  | GUI  |Lower | Esc  |Bksp  |Space |Enter | Raise| Left | Down |  Up  |Right |
  `-------------------------------------------------------------------------------------------------'
 ```
 
@@ -49,14 +49,14 @@
 
 ## Layers
 
-|Priority|number|name|description|
-| ---- | ---- | --- | --- |
-|high|16|Adjust|Functions|
-||4|Raise|Numeric charactors|
-||3|Lower|Other charactors|
-||2|Dvorak|Dvorak leyout|
-||1|Colemak|Colemak leyout|
-|low|0|Qwerty|QWERTY leyout(base)|
+| Priority | number | name    | description         |
+| -------- | ------ | ------- | ------------------- |
+| high     | 16     | Adjust  | Functions           |
+|          | 4      | Raise   | Numeric charactors  |
+|          | 3      | Lower   | Other charactors    |
+|          | 2      | Dvorak  | Dvorak leyout       |
+|          | 1      | Colemak | Colemak leyout      |
+| low      | 0      | Qwerty  | QWERTY leyout(base) |
 
 ### Lower
 ```
