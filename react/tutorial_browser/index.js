@@ -12,61 +12,19 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  // コンポーネントが何かを「覚える」ためにはstateを利用する
-  constructor(props) {
-    // JavaScriptのクラスでは、サブクラスのコンストラクタ定義する際は常にsuperがいる
-    // Reactのクラスコンポーネントでは、全コンストラクタをsuper(props)から始める
-    super(props);
-    // プライベートなので、子コンポーネントから変更することはできない
-    this.state = {
-      // 盤面をnullで埋める 
-      squares: Array(9).fill(null),
-      xIsNext: true,
-    };
-  }
-  
-  // クリック時のイベント定義
-  handleClick(i) {
-    // 配列をコピー
-    const squares = this.state.squares.slice();
-    // 処理が不要になったパターン(勝者が決まった or すでにマークが入っている)の場合は、何もしない
-    if (calculateWinner(squares) || squares[i]){
-      return;
-    }
-    // コピーした配列の中身をプレーヤに応じて変更
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    // コンポーネントの再描画をする
-    this.setState({
-      // 状態を更新した配列をstateの配列に代入
-      squares: squares,
-      // プレーヤの手番を決めるフラグを反転させる
-      xIsNext: !this.state.xIsNext,
-    });
-  }
-  
   // Squareコンポーネント呼び出し、マス目を描画する
   renderSquare(i) {
     // stateの値をpropsとしてコンポーネントに渡す
-    return (<Square
-              value={this.state.squares[i]}
-              // onClickをpropsとして渡している
-              onClick={() => this.handleClick(i)}
-              />
-           );
+    return (
+      <Square
+        value={this.props.squares[i]}
+        // onClickをSquareコンポーネントにpropsとして渡している
+        onClick={() => this.props.onClick(i)}
+      />
+     );
   }
 
   render() {
-    // 勝利条件を満たしていないか判定
-    const winner = calculateWinner(this.state.squares);
-    let status;
-    if (winner){
-      // 勝者がいる場合、勝者を表示する
-      status = 'Winner: ' + winner;
-    } else {
-      // 勝者がいない場合、次プレーヤを表示する
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    }
-
     return (
       <div>
         <div className="status">{status}</div>
@@ -91,15 +49,124 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+  // コンポーネントが何かを「覚える」ためにはstateを利用する
+  constructor(props) {
+    // JavaScriptのクラスでは、サブクラスのコンストラクタ定義する際は常にsuperがいる
+    // Reactのクラスコンポーネントでは、全コンストラクタをsuper(props)から始める
+    super(props);
+    // プライベートなので、子コンポーネントから変更することはできない
+    this.state = {
+      // Boardコンポーネントで保持していたstateをリフトアップし、履歴形式で保持
+      history: [{
+        squares: Array(9).fill(null),
+      }],
+      // 手番
+      stepNumber: 0,
+      // プレイヤー手番
+      xIsNext: true,
+    };
+  }
+  
+  // クリック時のイベント定義
+  handleClick(i) {
+    // 配列の取り出し位置(最初の配列)と、終わりの位置を指定してコピー（終わりの位置の直前の配列までがコピー対象）
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    // 現在の盤面を取得
+    const current = history[history.length - 1];
+    // 配列をコピー
+    const squares = current.squares.slice();
+    // 処理が不要になったパターン(勝者が決まった or すでにマークが入っている)の場合は、何もしない
+    if (calculateWinner(squares) || squares[i]){
+      return;
+    }
+    // コピーした盤面の中身を上書き
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    // コンポーネントの再描画をする
+    this.setState({
+      // 状態を更新したsquareをhistryに追加した新しい配列を、stateのhistoryに代入
+      // プロパティのようなオブジェクトを入れるときは{}が必要
+      history: history.concat([{
+        squares: squares,
+      }]),
+      // 何手番目かを保持
+      stepNumber: history.length,
+      // プレーヤの手番を決めるフラグを反転させる
+      xIsNext: !this.state.xIsNext,
+    });
+  }
+  
+  jumpTo(step){
+    this.setState({
+      stepNumber: step,
+      // 偶数の手番がXなのでstepが2で割り切れる場合は、trueとする 
+      xIsNext: (step % 2) === 0,
+    });
+  }
+  
   render() {
+    const history = this.state.history;
+    // 手番の盤面を取得
+    const current = history[this.state.stepNumber];
+    const winner = calculateWinner(current.squares);
+    
+    // タイムトラベル用のエレメント作成
+    // stepにインデックス、 moveにsquareが入る
+    const moves = history.map((step, move) => {
+      // 保持しているすべての要素に対し、以下の処理を行う
+      const desc = move ?
+        'Go to move #' + move :
+        'Go to game start';
+      return (
+        /*
+         リストをレンダーする際、リストの項目についkeyプロパティを与える必要がある
+         keyを与えることによって、リストのような兄弟要素の中でアイテムを特定できる
+         リストが再レンダーされる際、Reactはそれぞれのリスト項目のkeyについて、
+         前回のリスト項目内に同一のkeyを持つものがないかを探す
+
+         keyの状態による挙動は以下
+         * 前回リストにないkeyが含まれていれば、コンポーネントを作成
+         * 前回リストにあったkeyが含まれていなければ、以前のコンポーネントを破棄
+         * 前回リストと今回リストでkeyがマッチした場合、対応するコンポーネントは移動される
+
+         ※ keyはそれぞれのコンポーネントの同一性に関する情報をReactで管理する
+            -> 一意な事がわかっているので、再レンダーしてもstateが保持できるようになる
+               ※ keyが変化していれば、コンポーネントは破棄されて新しいstateになる
+         
+         keyは特別なプロパティであり、Rectにより予約されている
+         要素が作成される際、Reactはkeyプロパティを引き抜いて、戻りの要素に直接そのkeyを格納する
+         どの子要素を更新すべきか決定する際にkeyを自動的に使用する
+         ※ コンポーネントが自身のkeyを確認する方法はない
+         
+         keyが指定されなかった場合、Reactは警告を表示して、デフォルトで配列のインデックスをkeyとする
+         -> 配列のインデックスをkeyとして使うことは、並び替え、挿入、削除の問題となるので、
+            ※※※ 動的なリストを作る場合は、正しいkeyを割り当てることが強く推奨される ※※※
+            ※ keyはコンポーネントとその兄弟(<li>の要素など)の間で一意であればOK
+        */
+        <li key={move}>
+          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+        </li>
+      );
+    });
+    
+    
+    let status;
+    if (winner) {
+      status = 'Winner: ' + winner;
+    } else {
+      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    }
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          <Board
+            squares={current.squares}
+            // onClickにhandleClickを設定し、Boardコンポーネントにpropsとして渡している
+            onClick={(i) => this.handleClick(i)}
+          />
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
-          <ol>{/* TODO */}</ol>
+          <div>{status}</div>
+          <ol>{moves}</ol>
         </div>
       </div>
     );
