@@ -58,7 +58,12 @@ class Game extends React.Component {
     this.state = {
       // Boardコンポーネントで保持していたstateをリフトアップし、履歴形式で保持
       history: [{
+        // 全盤面を保持した配列
         squares: Array(9).fill(null),
+        // どのマス目に入れたか
+        setSquare: null,
+        // プレイヤー名
+        player: null,
       }],
       // 手番
       stepNumber: 0,
@@ -87,6 +92,8 @@ class Game extends React.Component {
       // プロパティのようなオブジェクトを入れるときは{}が必要
       history: history.concat([{
         squares: squares,
+        setSquare: i,
+        player: squares[i],
       }]),
       // 何手番目かを保持
       stepNumber: history.length,
@@ -113,9 +120,15 @@ class Game extends React.Component {
     // stepにsquare、 moveにインデックスが入る
     const moves = history.map((step, move) => {
       // 保持しているすべての要素に対し、以下の処理を行う
+      // 配列が0以外なら、インデックス番号をボタンに入れる
       const desc = move ?
         'Go to move #' + move :
         'Go to game start';
+      // 配列が0以外なら、チェックしたボタンの位置を行列形式で取得する
+      const historyInfo = move ?
+        // 行を取得する際には小数点を切り捨てている
+        `player: ${step.player} / (${(step.setSquare % 3) + 1}, ${Math.floor(step.setSquare / 3) + 1})` :
+        '';
       return (
         /*
          リストをレンダーする際、リストの項目についてkeyプロパティを与える必要がある
@@ -144,6 +157,7 @@ class Game extends React.Component {
         */
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <label>{historyInfo}</label>
         </li>
       );
     });
