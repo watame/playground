@@ -110,7 +110,7 @@ class Game extends React.Component {
     const winner = calculateWinner(current.squares);
     
     // タイムトラベル用のエレメント作成
-    // stepにインデックス、 moveにsquareが入る
+    // stepにsquare、 moveにインデックスが入る
     const moves = history.map((step, move) => {
       // 保持しているすべての要素に対し、以下の処理を行う
       const desc = move ?
@@ -118,7 +118,7 @@ class Game extends React.Component {
         'Go to game start';
       return (
         /*
-         リストをレンダーする際、リストの項目についkeyプロパティを与える必要がある
+         リストをレンダーする際、リストの項目についてkeyプロパティを与える必要がある
          keyを与えることによって、リストのような兄弟要素の中でアイテムを特定できる
          リストが再レンダーされる際、Reactはそれぞれのリスト項目のkeyについて、
          前回のリスト項目内に同一のkeyを持つものがないかを探す
