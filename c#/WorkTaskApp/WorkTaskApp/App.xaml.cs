@@ -1,5 +1,6 @@
-﻿using Prism.Ioc;
-using WorkTaskApp.Views;
+﻿using WorkTaskApp.Views;
+using Prism.Ioc;
+using Prism.Modularity;
 using System.Windows;
 
 namespace WorkTaskApp
