@@ -13,11 +13,11 @@ namespace WorkTaskApp.Models
         /// <summary>
         /// 農薬名
         /// </summary>
-        private string pestsideName;
-        public string PestsideName
+        private string pestcideName;
+        public string PestcideName
         {
-            get { return pestsideName; }
-            set { SetProperty(ref pestsideName, value); }
+            get { return pestcideName; }
+            set { SetProperty(ref pestcideName, value); }
         }
 
         /// <summary>
@@ -45,9 +45,18 @@ namespace WorkTaskApp.Models
         /// </summary>
         public PesticideContent()
         {
-            this.PestsideName = "";
+            this.PestcideName = "";
             this.Used = 0;
             this.unit = "";
+        }
+
+        /// <summary>
+        /// ListView用にフォーマットした文字列を戻す
+        /// </summary>
+        /// <returns>フォーマットされた文字列</returns>
+        public override string ToString()
+        {
+            return String.Format("{0}, {1} {2}", PestcideName, Used, Unit);
         }
     }
 }
