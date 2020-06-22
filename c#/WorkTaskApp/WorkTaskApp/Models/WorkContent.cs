@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using Prism.Mvvm;
 
@@ -31,6 +32,16 @@ namespace WorkTaskApp.Models
         }
 
         /// <summary>
+        /// 農薬インスタンスリスト
+        /// </summary>
+        private ObservableCollection<PesticideContent> pesticideContents;
+        public ObservableCollection<PesticideContent> PesticideContents
+        {
+            get { return pesticideContents; }
+            set { SetProperty(ref pesticideContents, value); }
+        }
+
+        /// <summary>
         /// 作業開始時刻
         /// </summary> 
         private DateTime startWorkTime;
@@ -56,6 +67,7 @@ namespace WorkTaskApp.Models
         public WorkContent()
         {
             this.Content = "";
+            this.PesticideContents = new ObservableCollection<PesticideContent>();
             DateTime nowDate = DateTime.Now;
             this.startWorkTime = new DateTime(nowDate.Year, nowDate.Month, nowDate.Day, 6, 0, 0);
             this.endWorkTime = new DateTime(nowDate.Year, nowDate.Month, nowDate.Day, 6, 0, 0);
