@@ -27,10 +27,19 @@ namespace WorkTaskApp.Models
         /// 作業内容インスタンスリスト
         /// </summary>
         private ObservableCollection<WorkContent> workContents;
-        public ObservableCollection<WorkContent> WorkContents 
+        public ObservableCollection<WorkContent> WorkContents
         {
             get { return workContents; }
             set { SetProperty(ref workContents, value); }
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public RecordByDate()
+        {
+            this.DateWeather = new DateWeather();
+            this.WorkContents = new ObservableCollection<WorkContent>();
         }
     }
 }

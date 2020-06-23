@@ -51,6 +51,17 @@ namespace WorkTaskApp.Models
         }
 
         /// <summary>
+        /// クローン用コンストラクタ
+        /// </summary>
+        /// <param name="pesticideContent"></param>
+        public PesticideContent(PesticideContent pesticideContent)
+        {
+            this.PestcideName = pesticideContent.pestcideName;
+            this.Used = pesticideContent.Used;
+            this.Unit = pesticideContent.Unit;
+        }
+
+        /// <summary>
         /// ListView用にフォーマットした文字列を戻す
         /// </summary>
         /// <returns>フォーマットされた文字列</returns>

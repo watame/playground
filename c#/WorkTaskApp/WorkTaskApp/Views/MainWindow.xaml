@@ -48,7 +48,7 @@
                 <xctk:TimePicker Grid.Column="3" x:Name="EndWorkTime" Value="{Binding WorkContent.EndWorkTime}" Margin="5" FormatString="HH:mm" Format="Custom" TimeInterval="0:30:0" />
             </Grid>
             <ListBox ItemsSource="{Binding WorkContent.PesticideContents}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="100"/>
-            <Button x:Name="Save" Margin="10,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業保存</Button>
+            <Button x:Name="Save" Margin="10,5,5,5" Command="{Binding WorkContentClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業保存</Button>
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1" x:Name="Pesticide" Margin="5">
             <TextBlock Text="農薬散布" Margin="5"/>
@@ -57,7 +57,7 @@
                     <ColumnDefinition Width="5*"/>
                     <ColumnDefinition Width="5*"/>
                 </Grid.ColumnDefinitions>
-                <ComboBox ItemsSource="{Binding PesticideContents}" SelectedItem="{Binding PesticideContent}" DisplayMemberPath="PestcideName" VerticalAlignment="Center" Margin="5"/>
+                <ComboBox ItemsSource="{Binding PesticideContents}" SelectedItem="{Binding PesticideContent}" DisplayMemberPath="PestcideName" VerticalAlignment="Center" Margin="5" SelectedIndex="0"/>
                 <Grid Grid.Column="1" Margin="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="7*"/>
@@ -67,7 +67,7 @@
                     <TextBlock Grid.Column="1" x:Name="Unit" Text="{Binding PesticideContent.Unit}" VerticalAlignment="Center" FontWeight="Bold"/>
                 </Grid>
             </Grid>
-            <Button Content="農薬設定" Margin="10, 5, 5, 5" Command="{Binding PesticideClecked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Button Content="農薬設定" Margin="10, 5, 5, 5" Command="{Binding PesticideClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.ColumnSpan="2" x:Name="Log" Margin="20">
             <TextBlock>作業登録ログ</TextBlock>

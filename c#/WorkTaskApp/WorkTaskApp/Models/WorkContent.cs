@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Text;
 using Prism.Mvvm;
 
@@ -71,6 +72,21 @@ namespace WorkTaskApp.Models
             DateTime nowDate = DateTime.Now;
             this.startWorkTime = new DateTime(nowDate.Year, nowDate.Month, nowDate.Day, 6, 0, 0);
             this.endWorkTime = new DateTime(nowDate.Year, nowDate.Month, nowDate.Day, 6, 0, 0);
+        }
+
+        /// <summary>
+        /// クローン用コンストラクタ
+        /// </summary>
+        public WorkContent(WorkContent workContent)
+        {
+            this.Content = workContent.Content;
+            this.pesticideContents = new ObservableCollection<PesticideContent>();
+            foreach (PesticideContent pestcide in workContent.pesticideContents)
+            {
+                this.pesticideContents.Add(new PesticideContent(pestcide));
+            }
+            this.startWorkTime = workContent.StartWorkTime;
+            this.endWorkTime = workContent.EndWorkTime;
         }
     }
 }

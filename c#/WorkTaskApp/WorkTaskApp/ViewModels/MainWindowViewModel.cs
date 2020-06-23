@@ -40,7 +40,7 @@ namespace WorkTaskApp.ViewModels
         /// 農薬インスタンス
         /// </summary>
         private PesticideContent pesticideContent;
-        public PesticideContent PesticideContent 
+        public PesticideContent PesticideContent
         {
             get { return pesticideContent; }
             set { SetProperty(ref pesticideContent, value); }
@@ -49,12 +49,12 @@ namespace WorkTaskApp.ViewModels
         /// <summary>
         /// 農薬登録クリックイベント
         /// </summary>
-        public DelegateCommand PesticideClecked { get; private set;}
+        public DelegateCommand PesticideClicked { get; private set; }
 
         /// <summary>
         /// 作業内容クリックイベント
         /// </summary>
-        public DelegateCommand WorkContentClecked { get; private set;}
+        public DelegateCommand WorkContentClicked { get; private set; }
 
         /// <summary>
         /// コンストラクタ
@@ -73,9 +73,13 @@ namespace WorkTaskApp.ViewModels
             WorkContent = new WorkContent();
             PesticideContent = new PesticideContent();
 
-            PesticideClecked = new DelegateCommand(
-                () => AddPesticide(),
-                () => true);
+            // 農薬登録コマンド登録
+            PesticideClicked = new DelegateCommand(
+                () => AddPesticide());
+
+            // 作業登録コマンド登録
+            WorkContentClicked = new DelegateCommand(
+                () => AddWorkContent());
         }
 
         /// <summary>
@@ -83,12 +87,15 @@ namespace WorkTaskApp.ViewModels
         /// </summary>
         public void AddPesticide()
         {
-            WorkContent.PesticideContents.Add(new PesticideContent()
-            {
-                PestcideName = PesticideContent.PestcideName,
-                Used = PesticideContent.Used,
-                Unit = PesticideContent.Unit
-            }) ;
+            WorkContent.PesticideContents.Add(new PesticideContent(PesticideContent));
+        }
+
+        /// <summary>
+        /// 作業登録コールバック
+        /// </summary>
+        public void AddWorkContent()
+        {
+            recordByDate.WorkContents.Add(new WorkContent(WorkContent));
         }
     }
 }
