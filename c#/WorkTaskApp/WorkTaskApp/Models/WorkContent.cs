@@ -12,6 +12,8 @@ namespace WorkTaskApp.Models
     /// </summary>
     public class WorkContent : BindableBase
     {
+        public int Id { get; set; }
+        public int DateId { get; set; }
         /// <summary>
         /// ユーザID
         /// </summary>

@@ -64,6 +64,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\DataBaseManager.cs" />
     <Compile Include="Models\DateWeather.cs" />
     <Compile Include="Models\PesticideContent.cs" />
     <Compile Include="Models\RecordByDate.cs" />
@@ -102,6 +103,9 @@
       <Version>3.8.1</Version>
     </PackageReference>
     <PackageReference Include="Prism.Unity" Version="7.2.0.1422" />
+    <PackageReference Include="System.Data.SQLite.Core">
+      <Version>1.0.113.1</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

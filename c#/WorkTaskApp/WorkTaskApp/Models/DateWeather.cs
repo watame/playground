@@ -10,6 +10,8 @@ namespace WorkTaskApp.Models
 {
     public class DateWeather : BindableBase
     {
+        public int Id { get; set; }
+
         /// <summary>
         /// 作業日時
         /// </summary>

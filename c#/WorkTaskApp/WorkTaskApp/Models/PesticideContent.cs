@@ -10,6 +10,8 @@ namespace WorkTaskApp.Models
     /// </summary>
     public class PesticideContent : BindableBase
     {
+        public int Id { get; set; }
+        public int PestcideId { get; set; }
         /// <summary>
         /// 農薬名
         /// </summary>
@@ -23,8 +25,8 @@ namespace WorkTaskApp.Models
         /// <summary>
         /// 使用量
         /// </summary>
-        private Int16 used;
-        public Int16 Used
+        private double used;
+        public double Used
         {
             get { return used; }
             set { SetProperty(ref used, value); }
@@ -59,6 +61,8 @@ namespace WorkTaskApp.Models
             this.PestcideName = pesticideContent.pestcideName;
             this.Used = pesticideContent.Used;
             this.Unit = pesticideContent.Unit;
+            this.PestcideId = pesticideContent.PestcideId;
+
         }
 
         /// <summary>
