@@ -1,6 +1,7 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Threading;
@@ -19,11 +20,46 @@ namespace WorkTaskApp.ViewModels
         /// <summary>
         /// 農薬マスタ読み込みコレクション
         /// </summary>
-        private ObservableCollection<PesticideContent> pesticideContents;
-        public ObservableCollection<PesticideContent> PesticideContents
+        private ObservableCollection<PesticideMaster> pesticideMasters;
+        public ObservableCollection<PesticideMaster> PesticideMasters
         {
-            get { return pesticideContents; }
-            set { SetProperty(ref pesticideContents, value); }
+            get { return pesticideMasters; }
+            set { SetProperty(ref pesticideMasters, value); }
+        }
+
+        private PesticideMaster pesticideMaster;
+        public PesticideMaster PesticideMaster
+        {
+            get { return pesticideMaster; }
+            set { SetProperty(ref pesticideMaster, value); }
+        }
+
+        private PesticideMaster registerPesticide;
+        public PesticideMaster RegisterPesticide
+        {
+            get { return registerPesticide; }
+            set { SetProperty(ref registerPesticide, value); }
+        }
+
+        private ObservableCollection<WorkerMaster> workerMasters;
+        public ObservableCollection<WorkerMaster> WorkerMasters
+        {
+            get { return workerMasters; }
+            set { SetProperty(ref workerMasters, value); }
+        }
+
+        private WorkerMaster workerMaster;
+        public WorkerMaster WorkerMaster
+        {
+            get { return workerMaster; }
+            set { SetProperty(ref workerMaster, value); }
+        }
+
+        private WorkerMaster registerWorker;
+        public WorkerMaster RegisterWorker
+        {
+            get { return registerWorker; }
+            set { SetProperty(ref registerWorker, value); }
         }
 
         /// <summary>
@@ -36,15 +72,7 @@ namespace WorkTaskApp.ViewModels
         /// </summary>
         public WorkContent WorkContent { get; set; }
 
-        /// <summary>
-        /// 農薬インスタンス
-        /// </summary>
-        private PesticideContent pesticideContent;
-        public PesticideContent PesticideContent
-        {
-            get { return pesticideContent; }
-            set { SetProperty(ref pesticideContent, value); }
-        }
+        public PesticideContent PesticideContent { get; set; }
 
         /// <summary>
         /// 農薬登録クリックイベント
@@ -61,12 +89,13 @@ namespace WorkTaskApp.ViewModels
         /// </summary>
         public MainWindowViewModel()
         {
+            DataBaseManager.ConnectDB("test.db");
             // テスト
-            PesticideContents = new ObservableCollection<PesticideContent>
+            PesticideMasters = new ObservableCollection<PesticideMaster>
             {
-                new PesticideContent(){PestcideName = "A", Used = 100, Unit = "ℓ"},
-                new PesticideContent(){PestcideName = "B", Used = 150, Unit = "g"},
-                new PesticideContent(){PestcideName = "C", Used = 10, Unit = "kg"},
+                new PesticideMaster(){Name = "A", Unit = "ℓ", ID = 1},
+                new PesticideMaster(){Name = "B", Unit = "g", ID = 2},
+                new PesticideMaster(){Name = "C", Unit = "kg", ID = 3},
             };
 
             DateWeather = new DateWeather();
@@ -87,6 +116,7 @@ namespace WorkTaskApp.ViewModels
         /// </summary>
         public void AddPesticide()
         {
+            PesticideContent.PestcideMaster = new PesticideMaster(PesticideMaster);
             WorkContent.PesticideContents.Add(new PesticideContent(PesticideContent));
         }
 
@@ -96,6 +126,7 @@ namespace WorkTaskApp.ViewModels
         public void AddWorkContent()
         {
             recordByDate.WorkContents.Add(new WorkContent(WorkContent));
+            List<DateWeather> tmp = DataBaseManager.DBManager.GetDateWeather();
         }
     }
 }

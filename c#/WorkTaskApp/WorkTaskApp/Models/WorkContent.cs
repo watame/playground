@@ -14,6 +14,7 @@ namespace WorkTaskApp.Models
     {
         public int Id { get; set; }
         public int DateId { get; set; }
+
         /// <summary>
         /// ユーザID
         /// </summary>

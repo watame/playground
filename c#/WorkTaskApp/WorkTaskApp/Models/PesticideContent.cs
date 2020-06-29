@@ -11,15 +11,15 @@ namespace WorkTaskApp.Models
     public class PesticideContent : BindableBase
     {
         public int Id { get; set; }
-        public int PestcideId { get; set; }
+
         /// <summary>
         /// 農薬名
         /// </summary>
-        private string pestcideName;
-        public string PestcideName
+        private PesticideMaster pestcideMaster;
+        public PesticideMaster PestcideMaster
         {
-            get { return pestcideName; }
-            set { SetProperty(ref pestcideName, value); }
+            get { return pestcideMaster; }
+            set { SetProperty(ref pestcideMaster, value); }
         }
 
         /// <summary>
@@ -33,23 +33,12 @@ namespace WorkTaskApp.Models
         }
 
         /// <summary>
-        /// 単位
-        /// </summary>
-        private string unit;
-        public string Unit
-        {
-            get { return unit; }
-            set { SetProperty(ref unit, value); }
-        }
-
-        /// <summary>
         /// コンストラクタ
         /// </summary>
         public PesticideContent()
         {
-            this.PestcideName = "";
+            this.PestcideMaster = new PesticideMaster();
             this.Used = 0;
-            this.unit = "";
         }
 
         /// <summary>
@@ -58,10 +47,8 @@ namespace WorkTaskApp.Models
         /// <param name="pesticideContent"></param>
         public PesticideContent(PesticideContent pesticideContent)
         {
-            this.PestcideName = pesticideContent.pestcideName;
+            this.PestcideMaster = pesticideContent.pestcideMaster;
             this.Used = pesticideContent.Used;
-            this.Unit = pesticideContent.Unit;
-            this.PestcideId = pesticideContent.PestcideId;
 
         }
 
@@ -71,7 +58,7 @@ namespace WorkTaskApp.Models
         /// <returns>フォーマットされた文字列</returns>
         public override string ToString()
         {
-            return String.Format("{0}, {1} {2}", PestcideName, Used, Unit);
+            return String.Format("{0}, {1} {2}", pestcideMaster.Name, Used, pestcideMaster.Unit);
         }
     }
 }

@@ -5,72 +5,120 @@
         prism:ViewModelLocator.AutoWireViewModel="True"
         Title="作業管理アプリ" Height="800" Width="1000">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0" Grid.Column="0" Margin="5">
-            <TextBlock Text="作業内容" Margin="5"/>
-            <Grid Margin="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="3*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="作業日" Margin="5" VerticalAlignment="Center"/>
-                <xctk:DateTimePicker Grid.Column="1" x:Name="WorkDate" Value="{Binding DateWeather.WorkDate}" Margin="5" TimePickerVisibility="Collapsed" Format="LongDate" ShowButtonSpinner="False"/>
-                <TextBlock Grid.Column="2" Text="天気" Margin="5" VerticalAlignment="Center"/>
-                <TextBox Grid.Column="3" Text="{Binding DateWeather.Weather}" Margin="5" VerticalAlignment="Center"/>
-            </Grid>
-            <Grid Margin="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="8*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="作業詳細" Margin="5" Grid.Column="0"/>
-                <TextBox Grid.Column="1" Text="{Binding WorkContent.Content}" Margin="5" VerticalAlignment="Center"/>
-            </Grid>
-            <Grid Margin="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="3*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="作業開始" Margin="5"/>
-                <xctk:TimePicker Grid.Column="1" x:Name="StartWorkTime" Value="{Binding WorkContent.StartWorkTime}" Margin="5" FormatString="HH:mm" Format="Custom" TimeInterval="0:30:0" />
-                <TextBlock Grid.Column="2" Text="作業終了" Margin="5"/>
-                <xctk:TimePicker Grid.Column="3" x:Name="EndWorkTime" Value="{Binding WorkContent.EndWorkTime}" Margin="5" FormatString="HH:mm" Format="Custom" TimeInterval="0:30:0" />
-            </Grid>
-            <ListBox ItemsSource="{Binding WorkContent.PesticideContents}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="100"/>
-            <Button x:Name="Save" Margin="10,5,5,5" Command="{Binding WorkContentClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業保存</Button>
-        </StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="1" x:Name="Pesticide" Margin="5">
-            <TextBlock Text="農薬散布" Margin="5"/>
-            <Grid Margin="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="5*"/>
-                    <ColumnDefinition Width="5*"/>
-                </Grid.ColumnDefinitions>
-                <ComboBox ItemsSource="{Binding PesticideContents}" SelectedItem="{Binding PesticideContent}" DisplayMemberPath="PestcideName" VerticalAlignment="Center" Margin="5" SelectedIndex="0"/>
-                <Grid Grid.Column="1" Margin="5">
+        <TabControl>
+            <TabItem Header="作業内容">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="7*"/>
-                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <xctk:DoubleUpDown Grid.Column="0" x:Name="Used" Value="{Binding PesticideContent.Used}" Margin="5" />
-                    <TextBlock Grid.Column="1" x:Name="Unit" Text="{Binding PesticideContent.Unit}" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="5">
+                        <TextBlock Text="作業内容" Margin="5"/>
+                        <Grid Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="3*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="作業日" Margin="5" VerticalAlignment="Center"/>
+                            <xctk:DateTimePicker Grid.Column="1" x:Name="WorkDate" Value="{Binding DateWeather.WorkDate}" Margin="5" TimePickerVisibility="Collapsed" Format="LongDate" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="天気" Margin="5" VerticalAlignment="Center"/>
+                            <TextBox Grid.Column="3" Text="{Binding DateWeather.Weather}" Margin="5" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="8*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="作業詳細" Margin="5" Grid.Column="0"/>
+                            <TextBox Grid.Column="1" Text="{Binding WorkContent.Content}" Margin="5" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="3*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="作業開始" Margin="5"/>
+                            <xctk:TimePicker Grid.Column="1" x:Name="StartWorkTime" Value="{Binding WorkContent.StartWorkTime}" Margin="5" FormatString="HH:mm" Format="Custom" TimeInterval="0:30:0" />
+                            <TextBlock Grid.Column="2" Text="作業終了" Margin="5"/>
+                            <xctk:TimePicker Grid.Column="3" x:Name="EndWorkTime" Value="{Binding WorkContent.EndWorkTime}" Margin="5" FormatString="HH:mm" Format="Custom" TimeInterval="0:30:0" />
+                        </Grid>
+                        <ListBox ItemsSource="{Binding WorkContent.PesticideContents}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="100"/>
+                        <Button x:Name="Save" Margin="10,5,5,5" Command="{Binding WorkContentClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業保存</Button>
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="1" x:Name="Pesticide" Margin="5">
+                        <TextBlock Text="農薬散布" Margin="5"/>
+                        <Grid Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*"/>
+                                <ColumnDefinition Width="5*"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox ItemsSource="{Binding PesticideMasters}" SelectedItem="{Binding PesticideMaster}" DisplayMemberPath="Name" VerticalAlignment="Center" Margin="5" SelectedIndex="0"/>
+                            <Grid Grid.Column="1" Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="7*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                </Grid.ColumnDefinitions>
+                                <xctk:DoubleUpDown Grid.Column="0" x:Name="Used" Value="{Binding PesticideContent.Used}" Margin="5" />
+                                <TextBlock Grid.Column="1" x:Name="Unit" Text="{Binding PesticideMaster.Unit}" VerticalAlignment="Center" FontWeight="Bold"/>
+                            </Grid>
+                        </Grid>
+                        <Button Content="農薬設定" Margin="10, 5, 5, 5" Command="{Binding PesticideClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.ColumnSpan="2" x:Name="Log" Margin="20">
+                        <TextBlock>作業登録ログ</TextBlock>
+                    </StackPanel>
                 </Grid>
-            </Grid>
-            <Button Content="農薬設定" Margin="10, 5, 5, 5" Command="{Binding PesticideClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        </StackPanel>
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" x:Name="Log" Margin="20">
-            <TextBlock>作業登録ログ</TextBlock>
-        </StackPanel>
+            </TabItem>
+            <TabItem Header="作業者登録">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="9*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Margin="10">
+                        <TextBlock Text="作業者名"/>
+                        <TextBox Text="{Binding RegisterWorker}"/>
+                    </StackPanel>
+                    <ListBox Grid.Row="1" ItemsSource="{Binding WorkContent.PesticideContents}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="農薬登録">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="8*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="8*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Column="0" Grid.Row="0" Text="農薬名" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding RegisterPesticide}"/>
+                        <TextBlock Grid.Column="0" Grid.Row="1" Text="単位" VerticalAlignment="Center"/>
+                        <TextBox  Grid.Column="1" Grid.Row="1" Text="{Binding RegisterPesticide}"/>
+                        <TextBlock Grid.Column="0" Grid.Row="2" Text="URL" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding RegisterPesticide}"/>
+                        <TextBlock Grid.Column="0" Grid.Row="3" Text="薬品説明" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding RegisterPesticide}"/>
+                    </Grid>
+                    <ListBox Grid.Row="1" ItemsSource="{Binding PesticideMasters}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
