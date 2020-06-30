@@ -48,5 +48,14 @@ namespace WorkTaskApp.Models
             this.ID = workerMaster.ID;
             this.Name = workerMaster.Name;
         }
+
+        /// <summary>
+        /// ListView用にフォーマットした文字列を戻す
+        /// </summary>
+        /// <returns>フォーマットされた文字列</returns>
+        public override string ToString()
+        {
+            return String.Format("作業名：{0}", this.Name);
+        }
     }
 }

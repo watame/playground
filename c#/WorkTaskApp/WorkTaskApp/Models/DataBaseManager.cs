@@ -98,7 +98,7 @@ namespace WorkTaskApp.Models
             List<WorkerMaster> result = new List<WorkerMaster>();
             try
             {
-                if (-1 == id)
+                if (-1 != id)
                 {
                     command.CommandText = @"SELECT * FROM M_Worker WHERE id = ?";
                     this.command.Parameters.Clear();
@@ -141,7 +141,7 @@ namespace WorkTaskApp.Models
             List<PesticideMaster> result = new List<PesticideMaster>();
             try
             {
-                if (-1 == id)
+                if (-1 != id)
                 {
                     command.CommandText = @"SELECT * FROM M_Pesticide WHERE id = ?";
                     this.command.Parameters.Clear();
@@ -292,10 +292,10 @@ namespace WorkTaskApp.Models
             {
                 this.command.CommandText = "INSERT INTO M_Pesticide(name, unit, uri, description) VALUES(?, ?, ?, ?)";
                 this.command.Parameters.Clear();
-                this.command.Parameters.Add(pesticideMaster.Name);
-                this.command.Parameters.Add(pesticideMaster.Unit);
-                this.command.Parameters.Add(pesticideMaster.URI);
-                this.command.Parameters.Add(pesticideMaster.Description);
+                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Name });
+                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Unit });
+                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.URI });
+                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Description });
                 this.command.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -314,7 +314,7 @@ namespace WorkTaskApp.Models
             {
                 this.command.CommandText = "INSERT INTO M_Worker(name) VALUES(?)";
                 this.command.Parameters.Clear();
-                this.command.Parameters.Add(workerMaster.Name);
+                this.command.Parameters.Add(new SQLiteParameter { Value = workerMaster.Name });
                 this.command.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -334,8 +334,8 @@ namespace WorkTaskApp.Models
             {
                 this.command.CommandText = "INSERT INTO T_DateWeather(weather, date) VALUES(?, ?)";
                 this.command.Parameters.Clear();
-                this.command.Parameters.Add(dateWeather.Weather);
-                this.command.Parameters.Add(dateWeather.WorkDate.ToString());
+                this.command.Parameters.Add(new SQLiteParameter { Value = dateWeather.Weather });
+                this.command.Parameters.Add(new SQLiteParameter { Value = dateWeather.WorkDate.ToString() });
                 this.command.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -355,10 +355,10 @@ namespace WorkTaskApp.Models
             {
                 this.command.CommandText = "INSERT INTO T_WorkContent(content, start_datetime, end_datetime, user_id, date_id) VALUES(?, ?, ?, ?, ?)";
                 this.command.Parameters.Clear();
-                this.command.Parameters.Add(workContent.Content);
-                this.command.Parameters.Add(workContent.StartWorkTime.ToString());
-                this.command.Parameters.Add(workContent.EndWorkTime.ToString());
-                this.command.Parameters.Add(workContent.UserId);
+                this.command.Parameters.Add(new SQLiteParameter { Value = workContent.Content });
+                this.command.Parameters.Add(new SQLiteParameter { Value = workContent.StartWorkTime.ToString() });
+                this.command.Parameters.Add(new SQLiteParameter { Value = workContent.EndWorkTime.ToString() });
+                this.command.Parameters.Add(new SQLiteParameter { Value = workContent.UserId });
                 this.command.Parameters.Add(date_id);
                 this.command.ExecuteNonQuery();
             }
@@ -379,9 +379,9 @@ namespace WorkTaskApp.Models
             {
                 this.command.CommandText = "INSERT INTO T_PesticideContent(used, pesticide_id, work_content_id) VALUES(?, ?, ?)";
                 this.command.Parameters.Clear();
-                this.command.Parameters.Add(pesticideContent.Used);
-                this.command.Parameters.Add(pesticideContent.PestcideMaster.ID);
-                this.command.Parameters.Add(work_content_id);
+                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideContent.Used });
+                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideContent.PestcideMaster.ID });
+                this.command.Parameters.Add(new SQLiteParameter { Value = work_content_id });
                 this.command.ExecuteNonQuery();
             }
             catch (Exception ex)

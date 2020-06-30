@@ -17,6 +17,13 @@ namespace WorkTaskApp.ViewModels
         /// </summary>
         private RecordByDate recordByDate = new RecordByDate();
 
+        private ObservableCollection<WorkContent> workContents;
+        public ObservableCollection<WorkContent> WorkContents
+        {
+            get { return workContents; }
+            set { SetProperty(ref workContents, value); }
+        }
+
         /// <summary>
         /// 農薬マスタ読み込みコレクション
         /// </summary>
@@ -85,22 +92,31 @@ namespace WorkTaskApp.ViewModels
         public DelegateCommand WorkContentClicked { get; private set; }
 
         /// <summary>
+        /// 農薬マスタ登録クリックイベント
+        /// </summary>
+        public DelegateCommand RegisterPesticideClicked { get; private set; }
+
+        /// <summary>
+        /// 作業者マスタ登録クリックイベント
+        /// </summary>
+        public DelegateCommand RegisterWorkerClicked { get; private set; }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public MainWindowViewModel()
         {
             DataBaseManager.ConnectDB("test.db");
-            // テスト
-            PesticideMasters = new ObservableCollection<PesticideMaster>
-            {
-                new PesticideMaster(){Name = "A", Unit = "ℓ", ID = 1},
-                new PesticideMaster(){Name = "B", Unit = "g", ID = 2},
-                new PesticideMaster(){Name = "C", Unit = "kg", ID = 3},
-            };
+            WorkContents = new ObservableCollection<WorkContent>();
+            PesticideMasters = new ObservableCollection<PesticideMaster>(DataBaseManager.DBManager.GetPesticideMaster());
+            WorkerMasters = new ObservableCollection<WorkerMaster>(DataBaseManager.DBManager.GetWorkerMaster());
 
             DateWeather = new DateWeather();
             WorkContent = new WorkContent();
             PesticideContent = new PesticideContent();
+            WorkerMaster = new WorkerMaster();
+            RegisterPesticide = new PesticideMaster();
+            RegisterWorker = new WorkerMaster();
 
             // 農薬登録コマンド登録
             PesticideClicked = new DelegateCommand(
@@ -109,12 +125,20 @@ namespace WorkTaskApp.ViewModels
             // 作業登録コマンド登録
             WorkContentClicked = new DelegateCommand(
                 () => AddWorkContent());
+
+            // 農薬マスタ登録コマンド登録
+            RegisterPesticideClicked = new DelegateCommand(
+                () => RegisterPesticideMaster());
+
+            // 作業者マスタ登録コマンド登録
+            RegisterWorkerClicked = new DelegateCommand(
+                () => RegisterWorkerMaster());
         }
 
         /// <summary>
         /// 農薬登録コールバック
         /// </summary>
-        public void AddPesticide()
+        private void AddPesticide()
         {
             PesticideContent.PestcideMaster = new PesticideMaster(PesticideMaster);
             WorkContent.PesticideContents.Add(new PesticideContent(PesticideContent));
@@ -123,10 +147,28 @@ namespace WorkTaskApp.ViewModels
         /// <summary>
         /// 作業登録コールバック
         /// </summary>
-        public void AddWorkContent()
+        private void AddWorkContent()
         {
-            recordByDate.WorkContents.Add(new WorkContent(WorkContent));
-            List<DateWeather> tmp = DataBaseManager.DBManager.GetDateWeather();
+            WorkContent.UserId = WorkerMaster.ID;
+            WorkContents.Add(new WorkContent(WorkContent));
+        }
+
+        /// <summary>
+        /// 農薬マスタ登録コールバック
+        /// </summary>
+        private void RegisterPesticideMaster()
+        {
+            DataBaseManager.DBManager.RegisterPesticideMaster(RegisterPesticide);
+            PesticideMasters = new ObservableCollection<PesticideMaster>(DataBaseManager.DBManager.GetPesticideMaster());
+        }
+
+        /// <summary>
+        /// 作業者マスタ登録コールバック
+        /// </summary>
+        private void RegisterWorkerMaster()
+        {
+            DataBaseManager.DBManager.RegisterWorkerMaster(RegisterWorker);
+            WorkerMasters = new ObservableCollection<WorkerMaster>(DataBaseManager.DBManager.GetWorkerMaster());
         }
     }
 }
