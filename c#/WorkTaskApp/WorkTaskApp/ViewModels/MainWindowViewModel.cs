@@ -1,6 +1,7 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
@@ -95,11 +96,15 @@ namespace WorkTaskApp.ViewModels
         /// 農薬マスタ登録クリックイベント
         /// </summary>
         public DelegateCommand RegisterPesticideClicked { get; private set; }
+        public DelegateCommand UpdatePesticideClicked { get; private set; }
+        public DelegateCommand<PesticideMaster> PesticideMasterClicked { get; private set; }
 
         /// <summary>
         /// 作業者マスタ登録クリックイベント
         /// </summary>
         public DelegateCommand RegisterWorkerClicked { get; private set; }
+        public DelegateCommand UpdateWorkerClicked { get; private set; }
+        public DelegateCommand<WorkerMaster> WorkerMasterClicked { get; private set; }
 
         /// <summary>
         /// コンストラクタ
@@ -130,9 +135,25 @@ namespace WorkTaskApp.ViewModels
             RegisterPesticideClicked = new DelegateCommand(
                 () => RegisterPesticideMaster());
 
+            // 農薬マスタ更新コマンド登録
+            UpdatePesticideClicked = new DelegateCommand(
+                () => UpdatePesticideMaster());
+
+            // 農薬マスタ読み込みコマンド登録(クリックで取得したインスタンスで登録用インスタンスを上書き)
+            PesticideMasterClicked = new DelegateCommand<PesticideMaster>(
+                (readPesticide) => RegisterPesticide = new PesticideMaster(readPesticide));
+
             // 作業者マスタ登録コマンド登録
             RegisterWorkerClicked = new DelegateCommand(
                 () => RegisterWorkerMaster());
+
+            // 作業者マスタ更新コマンド登録
+            UpdateWorkerClicked = new DelegateCommand(
+                () => UpdateWorkerMaster());
+
+            // 作業者マスタ読み込みコマンド登録(クリックで取得したインスタンスで登録用インスタンスを上書き)
+            WorkerMasterClicked = new DelegateCommand<WorkerMaster>(
+                (readWorker) => RegisterWorker = new WorkerMaster(readWorker));
         }
 
         /// <summary>
@@ -160,6 +181,21 @@ namespace WorkTaskApp.ViewModels
         {
             DataBaseManager.DBManager.RegisterPesticideMaster(RegisterPesticide);
             PesticideMasters = new ObservableCollection<PesticideMaster>(DataBaseManager.DBManager.GetPesticideMaster());
+            RegisterPesticide = new PesticideMaster();
+        }
+
+        /// <summary>
+        /// 農薬マスタ更新コールバック
+        /// </summary>
+        private void UpdatePesticideMaster()
+        {
+            if (0 == registerPesticide.ID)
+            {
+                return;
+            }
+            DataBaseManager.DBManager.UpdatePesticideMaster(RegisterPesticide);
+            PesticideMasters = new ObservableCollection<PesticideMaster>(DataBaseManager.DBManager.GetPesticideMaster());
+            RegisterPesticide = new PesticideMaster();
         }
 
         /// <summary>
@@ -169,6 +205,21 @@ namespace WorkTaskApp.ViewModels
         {
             DataBaseManager.DBManager.RegisterWorkerMaster(RegisterWorker);
             WorkerMasters = new ObservableCollection<WorkerMaster>(DataBaseManager.DBManager.GetWorkerMaster());
+            RegisterWorker = new WorkerMaster();
+        }
+
+        /// <summary>
+        /// 作業者マスタ更新コールバック
+        /// </summary>
+        private void UpdateWorkerMaster()
+        {
+            if (0 == RegisterWorker.ID)
+            {
+                return;
+            }
+            DataBaseManager.DBManager.UpdateWorkerMaster(RegisterWorker);
+            WorkerMasters = new ObservableCollection<WorkerMaster>(DataBaseManager.DBManager.GetWorkerMaster());
+            RegisterWorker = new WorkerMaster();
         }
     }
 }

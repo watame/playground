@@ -305,6 +305,29 @@ namespace WorkTaskApp.Models
         }
 
         /// <summary>
+        /// 農薬マスタ更新
+        /// </summary>
+        /// <param name="pesticideMaster"></param>
+        public void UpdatePesticideMaster(PesticideMaster pesticideMaster)
+        {
+            try
+            {
+                this.command.CommandText = "UPDATE M_Pesticide SET name = ? , unit = ?, uri = ?, description = ? WHERE id = ?";
+                this.command.Parameters.Clear();
+                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Name });
+                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Unit });
+                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.URI });
+                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Description });
+                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.ID });
+                this.command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new SQLiteException(ex.ToString());
+            }
+        }
+
+        /// <summary>
         /// 労働者マスタ登録
         /// </summary>
         /// <param name="workerMaster"></param>
@@ -315,6 +338,26 @@ namespace WorkTaskApp.Models
                 this.command.CommandText = "INSERT INTO M_Worker(name) VALUES(?)";
                 this.command.Parameters.Clear();
                 this.command.Parameters.Add(new SQLiteParameter { Value = workerMaster.Name });
+                this.command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new SQLiteException(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 労働者マスタ更新
+        /// </summary>
+        /// <param name="workerMaster"></param>
+        public void UpdateWorkerMaster(WorkerMaster workerMaster)
+        {
+            try
+            {
+                this.command.CommandText = "UPDATE M_Worker SET name = ? WHERE id = ?";
+                this.command.Parameters.Clear();
+                this.command.Parameters.Add(new SQLiteParameter { Value = workerMaster.Name });
+                this.command.Parameters.Add(new SQLiteParameter { Value = workerMaster.ID });
                 this.command.ExecuteNonQuery();
             }
             catch (Exception ex)
