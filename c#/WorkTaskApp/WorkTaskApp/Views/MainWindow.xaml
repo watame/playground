@@ -29,12 +29,10 @@
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Column="0" Grid.Row="0" Text="作業日" Margin="5" VerticalAlignment="Center"/>
-                            <xctk:DateTimePicker Grid.Column="1" Grid.Row="0" x:Name="WorkDate" Value="{Binding DateWeather.WorkDate}" Margin="5" TimePickerVisibility="Collapsed" Format="LongDate" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="0" Grid.Row="0" Text="作業者名" Margin="5"/>
+                            <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding WorkerMasters}" SelectedItem="{Binding WorkerMaster}" DisplayMemberPath="Name" Margin="5" SelectedIndex="{Binding WorkerMasterIndex}"/>
                             <TextBlock Grid.Column="2" Grid.Row="0" Text="天気" Margin="5" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="3" Grid.Row="0" Text="{Binding DateWeather.Weather}" Margin="5" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="0" Grid.Row="1" Text="作業者名" Margin="5"/>
-                            <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding WorkerMasters}" SelectedItem="{Binding WorkerMaster}" DisplayMemberPath="Name" VerticalAlignment="Center" Margin="5" SelectedIndex="0"/>
+                            <TextBox Grid.Column="3" Grid.Row="0" Text="{Binding WorkContent.Weather}" Margin="5" VerticalAlignment="Center"/>
                         </Grid>
                         <Grid Margin="5">
                             <Grid.ColumnDefinitions>
@@ -47,18 +45,30 @@
                         <Grid Margin="5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="3*"/>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="8*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="作業開始" Margin="5"/>
-                            <xctk:TimePicker Grid.Column="1" x:Name="StartWorkTime" Value="{Binding WorkContent.StartWorkTime}" Margin="5" FormatString="HH:mm" Format="Custom" TimeInterval="0:30:0" />
-                            <TextBlock Grid.Column="2" Text="作業終了" Margin="5"/>
-                            <xctk:TimePicker Grid.Column="3" x:Name="EndWorkTime" Value="{Binding WorkContent.EndWorkTime}" Margin="5" FormatString="HH:mm" Format="Custom" TimeInterval="0:30:0" />
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="0" Grid.Row="0" Text="作業開始" Margin="5"/>
+                            <xctk:DateTimePicker Grid.Column="1" Grid.Row="0" x:Name="StartWorkTime" Value="{Binding WorkContent.StartWorkTime}" Margin="5"/>
+                            <TextBlock Grid.Column="0" Grid.Row="1" Text="作業終了" Margin="5"/>
+                            <xctk:DateTimePicker Grid.Column="1" Grid.Row="1" x:Name="EndWorkTime" Value="{Binding WorkContent.EndWorkTime}" Margin="5" />
                         </Grid>
-                        <ListBox ItemsSource="{Binding WorkContent.PesticideContents}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="100"/>
-                        <Button Margin="10,5,5,5" Command="{Binding WorkContentClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業内容ストック</Button>
-                        <Button Margin="10,5,5,5" Command="{Binding Clicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">1日の作業保存</Button>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <Button Margin="5" Command="{Binding RegisterWorkContentClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業内容保存</Button>
+                            <Button Margin="5" Command="{Binding UpdateWorkContentClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業内容更新</Button>
+                            <Button Margin="5" Command="{Binding DeleteWorkContentClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業内容削除</Button>
+                        </StackPanel>
+                        <TextBlock Margin="5" Text="農薬内容"/>
+                        <ListBox x:Name="listOfPesticideContents" ItemsSource="{Binding WorkContent.PesticideContents}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="200" SelectedIndex="{Binding PesticideContentIndex}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <prism:InvokeCommandAction Command="{Binding PesticideContentsClicked}" CommandParameter="{Binding SelectedItem, ElementName=listOfPesticideContents}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ListBox>
                     </StackPanel>
                     <StackPanel Grid.Row="0" Grid.Column="1" x:Name="Pesticide" Margin="5">
                         <TextBlock Text="農薬散布" Margin="5"/>
@@ -67,87 +77,93 @@
                                 <ColumnDefinition Width="5*"/>
                                 <ColumnDefinition Width="5*"/>
                             </Grid.ColumnDefinitions>
-                            <ComboBox ItemsSource="{Binding PesticideMasters}" SelectedItem="{Binding PesticideMaster}" DisplayMemberPath="Name" VerticalAlignment="Center" Margin="5" SelectedIndex="0"/>
+                            <ComboBox ItemsSource="{Binding PesticideMasters}" SelectedItem="{Binding PesticideMaster}" DisplayMemberPath="Name" VerticalAlignment="Center" Margin="5" SelectedIndex="{Binding PesticideMasterIndex}"/>
                             <Grid Grid.Column="1" Margin="5">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="7*"/>
                                     <ColumnDefinition Width="3*"/>
                                 </Grid.ColumnDefinitions>
-                                <xctk:DoubleUpDown Grid.Column="0" x:Name="Used" Value="{Binding PesticideContent.Used}" Margin="5" />
+                                <xctk:DoubleUpDown Grid.Column="0" x:Name="Used" Value="{Binding PesticideContent.Used}" Margin="5" ParsingNumberStyle="Float" />
                                 <TextBlock Grid.Column="1" x:Name="Unit" Text="{Binding PesticideMaster.Unit}" VerticalAlignment="Center" FontWeight="Bold"/>
                             </Grid>
                         </Grid>
-                        <Button Content="農薬設定" Margin="10, 5, 5, 5" Command="{Binding PesticideClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <Button Content="農薬設定" Margin="5" Command="{Binding RegisterPesticideContentClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <Button Content="農薬更新" Margin="5" Command="{Binding UpdatePesticideContentClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <Button Content="農薬削除" Margin="5" Command="{Binding DeletePesticideContentClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        </StackPanel>
                     </StackPanel>
                     <StackPanel Grid.Row="1" Grid.ColumnSpan="2" x:Name="Log" Margin="20">
                         <TextBlock>作業登録ログ</TextBlock>
-                        <ListBox ItemsSource="{Binding WorkContents}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="100"/>
+                        <ListBox x:Name="listOfWorkContent" ItemsSource="{Binding WorkContents}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="200" SelectedIndex="{Binding WorkerMasterIndex}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <prism:InvokeCommandAction Command="{Binding WorkContentsClicked}" CommandParameter="{Binding SelectedItem, ElementName=listOfWorkContent}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ListBox>
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="作業者登録">
+            <TabItem Header="作業者/農薬マスタ">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="2*"/>
-                        <RowDefinition Height="8*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Margin="10">
-                        <TextBlock Text="作業者名"/>
-                        <TextBox Text="{Binding RegisterWorker.Name}"/>
+                    <StackPanel Grid.Row="0" Margin="5">
                         <StackPanel Orientation="Horizontal">
-                            <Button Command="{Binding RegisterWorkerClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業者保存</Button>
-                            <Button Command="{Binding UpdateWorkerClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業者更新</Button>
-                            <Button Command="{Binding DeleteWorkerClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業者削除</Button>
+                            <TextBlock Text="作業者名" Margin="5"/>
+                            <TextBox Text="{Binding RegisterWorker.Name}" Margin="5" Width="200"/>
                         </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Margin="5" Command="{Binding RegisterWorkerClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業者保存</Button>
+                            <Button Margin="5" Command="{Binding UpdateWorkerClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業者更新</Button>
+                            <Button Margin="5" Command="{Binding DeleteWorkerClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">作業者削除</Button>
+                        </StackPanel>
+                        <ListBox x:Name="listOfWorker" ItemsSource="{Binding WorkerMasters}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="200">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <prism:InvokeCommandAction Command="{Binding WorkerMasterClicked}" CommandParameter="{Binding SelectedItem, ElementName=listOfWorker}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ListBox>
                     </StackPanel>
-                    <ListBox x:Name="listOfWorker" Grid.Row="1" ItemsSource="{Binding WorkerMasters}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDoubleClick">
-                                <prism:InvokeCommandAction Command="{Binding WorkerMasterClicked}" CommandParameter="{Binding SelectedItem, ElementName=listOfWorker}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ListBox>
-                </Grid>
-            </TabItem>
-            <TabItem Header="農薬登録">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="2*"/>
-                        <RowDefinition Height="8*"/>
-                    </Grid.RowDefinitions>
-                    <Grid Margin="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="8*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Column="0" Grid.Row="0" Text="農薬名" VerticalAlignment="Center"/>
-                        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding RegisterPesticide.Name}"/>
-                        <TextBlock Grid.Column="0" Grid.Row="1" Text="単位" VerticalAlignment="Center"/>
-                        <TextBox  Grid.Column="1" Grid.Row="1" Text="{Binding RegisterPesticide.Unit}"/>
-                        <TextBlock Grid.Column="0" Grid.Row="2" Text="URL" VerticalAlignment="Center"/>
-                        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding RegisterPesticide.URI}"/>
-                        <TextBlock Grid.Column="0" Grid.Row="3" Text="薬品説明" VerticalAlignment="Center"/>
-                        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding RegisterPesticide.Description}"/>
-                        <StackPanel Grid.ColumnSpan="2" Grid.Row="4" Orientation="Horizontal">
-                            <Button Command="{Binding RegisterPesticideClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">農薬保存</Button>
-                            <Button Command="{Binding UpdatePesticideClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">農薬更新</Button>
-                            <Button Command="{Binding DeletePesticideClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">農薬削除</Button>
-                        </StackPanel>
-                    </Grid>
-                    <ListBox x:Name="listOfPesticide" Grid.Row="1" ItemsSource="{Binding PesticideMasters}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDoubleClick">
-                                <prism:InvokeCommandAction Command="{Binding PesticideMasterClicked}" CommandParameter="{Binding SelectedItem, ElementName=listOfPesticide}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ListBox>
+                    <StackPanel Grid.Row="1" Margin="5">
+                        <Grid Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="8*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Margin="5" Grid.Column="0" Grid.Row="0" Text="農薬名" VerticalAlignment="Center"/>
+                            <TextBox Margin="5" Grid.Column="1" Grid.Row="0" Text="{Binding RegisterPesticide.Name}"/>
+                            <TextBlock Margin="5" Grid.Column="0" Grid.Row="1" Text="単位" VerticalAlignment="Center"/>
+                            <TextBox Margin="5" Grid.Column="1" Grid.Row="1" Text="{Binding RegisterPesticide.Unit}"/>
+                            <TextBlock Margin="5" Grid.Column="0" Grid.Row="2" Text="URL" VerticalAlignment="Center"/>
+                            <TextBox Margin="5" Grid.Column="1" Grid.Row="2" Text="{Binding RegisterPesticide.URI}"/>
+                            <TextBlock Margin="5" Grid.Column="0" Grid.Row="3" Text="薬品説明" VerticalAlignment="Center"/>
+                            <TextBox Margin="5" Grid.Column="1" Grid.Row="3" Text="{Binding RegisterPesticide.Description}"/>
+                            <StackPanel Grid.ColumnSpan="2" Grid.Row="4" Orientation="Horizontal">
+                                <Button Margin="5" Command="{Binding RegisterPesticideClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">農薬保存</Button>
+                                <Button Margin="5" Command="{Binding UpdatePesticideClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">農薬更新</Button>
+                                <Button Margin="5" Command="{Binding DeletePesticideClicked}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">農薬削除</Button>
+                            </StackPanel>
+                        </Grid>
+                        <ListBox x:Name="listOfPesticide" ItemsSource="{Binding PesticideMasters}" Margin="10" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="200">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <prism:InvokeCommandAction Command="{Binding PesticideMasterClicked}" CommandParameter="{Binding SelectedItem, ElementName=listOfPesticide}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ListBox>
+                    </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>

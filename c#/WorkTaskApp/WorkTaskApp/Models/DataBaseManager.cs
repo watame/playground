@@ -199,20 +199,18 @@ namespace WorkTaskApp.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public List<WorkerMaster> GetWorkerMaster(int id = -1)
+        public List<WorkerMaster> GetWorkerMasters(int id = -1)
         {
             List<WorkerMaster> result = new List<WorkerMaster>();
             try
             {
                 if (-1 != id)
                 {
-                    command.CommandText = @"SELECT * FROM M_Worker WHERE id = ?";
-                    this.command.Parameters.Clear();
-                    command.Parameters.Add(id);
+                    PrepareCommandParameter("SELECT * FROM M_Worker WHERE id = ?", new List<object> { id });
                 }
                 else
                 {
-                    command.CommandText = @"SELECT * FROM M_Worker";
+                    command.CommandText = "SELECT * FROM M_Worker";
                 }
 
                 using (var reader = command.ExecuteReader())
@@ -221,7 +219,7 @@ namespace WorkTaskApp.Models
                     {
                         WorkerMaster tmp = new WorkerMaster()
                         {
-                            ID = int.Parse(reader["id"].ToString()),
+                            Id = int.Parse(reader["id"].ToString()),
                             Name = reader["name"].ToString(),
                         };
 
@@ -242,20 +240,18 @@ namespace WorkTaskApp.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public List<PesticideMaster> GetPesticideMaster(int id = -1)
+        public List<PesticideMaster> GetPesticideMasters(int id = -1)
         {
             List<PesticideMaster> result = new List<PesticideMaster>();
             try
             {
                 if (-1 != id)
                 {
-                    command.CommandText = @"SELECT * FROM M_Pesticide WHERE id = ?";
-                    this.command.Parameters.Clear();
-                    command.Parameters.Add(id);
+                    PrepareCommandParameter("SELECT * FROM M_Pesticide WHERE id = ?", new List<object> { id });
                 }
                 else
                 {
-                    command.CommandText = @"SELECT * FROM M_Pesticide";
+                    command.CommandText = "SELECT * FROM M_Pesticide";
                 }
 
                 using (var reader = command.ExecuteReader())
@@ -264,7 +260,7 @@ namespace WorkTaskApp.Models
                     {
                         PesticideMaster tmp = new PesticideMaster()
                         {
-                            ID = int.Parse(reader["id"].ToString()),
+                            Id = int.Parse(reader["id"].ToString()),
                             Name = reader["name"].ToString(),
                             Unit = reader["unit"].ToString(),
                             URI = reader["uri"].ToString(),
@@ -283,49 +279,15 @@ namespace WorkTaskApp.Models
         }
 
         /// <summary>
-        /// 日付・天気テーブルの取得
-        /// </summary>
-        /// <returns></returns>
-        public List<DateWeather> GetDateWeather()
-        {
-            List<DateWeather> result = new List<DateWeather>();
-            try
-            {
-                command.CommandText = @"SELECT * FROM T_DateWeather";
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        DateWeather tmp = new DateWeather()
-                        {
-                            Id = int.Parse(reader["id"].ToString()),
-                            WorkDate = DateTime.Parse(reader["date"].ToString()),
-                            Weather = reader["weather"].ToString()
-                        };
-                        result.Add(tmp);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new SQLiteException(ex.ToString());
-            }
-            return result;
-        }
-
-        /// <summary>
         /// 作業内容リスト取得
         /// </summary>
-        /// <param name="date_id"></param>
         /// <returns></returns>
-        public List<WorkContent> GetWorkContent(int date_id)
+        public List<WorkContent> GetWorkContents()
         {
             List<WorkContent> result = new List<WorkContent>();
             try
             {
-                this.command.CommandText = @"SELECT * FROM T_WorkContent WHERE date_id = ?";
-                this.command.Parameters.Clear();
-                this.command.Parameters.Add(date_id);
+                this.command.CommandText = "SELECT * FROM T_WorkContent";
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -334,11 +296,42 @@ namespace WorkTaskApp.Models
                         {
                             Id = int.Parse(reader["id"].ToString()),
                             Content = reader["content"].ToString(),
+                            Weather = reader["weather"].ToString(),
                             StartWorkTime = DateTime.Parse(reader["start_datetime"].ToString()),
                             EndWorkTime = DateTime.Parse(reader["end_datetime"].ToString()),
                             UserId = int.Parse(reader["user_id"].ToString()),
-                            DateId = int.Parse(reader["date_id"].ToString())
                         };
+
+                        result.Add(tmp);
+                    }
+                }
+
+                // 農薬内容リストは問い合わせが発生するので、リストが出来た後に農薬内容リストを取得する
+                foreach (WorkContent wc in result)
+                {
+                    List<WorkerMaster> master_list = GetWorkerMasters(wc.UserId);
+                    wc.WorkerMaster = new WorkerMaster(master_list[0]);
+                    wc.PesticideContents = new ObservableCollection<PesticideContent>(GetPesticideContents(wc.Id));
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new SQLiteException(ex.ToString());
+            }
+            return result;
+        }
+
+        public int GetWorkCotentLastId()
+        {
+            int result = -1;
+            try
+            {
+                this.command.CommandText = "SELECT id FROM T_WorkContent where rowid = last_insert_rowid()";
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result = int.Parse(reader["id"].ToString());
                     }
                 }
             }
@@ -346,6 +339,7 @@ namespace WorkTaskApp.Models
             {
                 throw new SQLiteException(ex.ToString());
             }
+
             return result;
         }
 
@@ -354,29 +348,32 @@ namespace WorkTaskApp.Models
         /// </summary>
         /// <param name="work_content_id"></param>
         /// <returns></returns>
-        public List<PesticideContent> GetPesticideContent(int work_content_id)
+        public List<PesticideContent> GetPesticideContents(int work_content_id)
         {
             List<PesticideContent> result = new List<PesticideContent>();
-            command.CommandText = @"SELECT * FROM T_PesticideContent WHERE work_content_id = ?";
             try
             {
-                this.command.Parameters.Clear();
-                command.Parameters.Add(work_content_id);
+                PrepareCommandParameter("SELECT * FROM T_PesticideContent WHERE work_content_id = ?", new List<object> { work_content_id });
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        int pestside_id = int.Parse(reader["pestcide_id"].ToString());
-                        List<PesticideMaster> master_list = GetPesticideMaster(pestside_id);
                         PesticideContent tmp = new PesticideContent
                         {
                             Id = int.Parse(reader["id"].ToString()),
-                            PestcideMaster = master_list[0],
+                            WorkContentId = int.Parse(reader["work_content_id"].ToString()),
+                            PesticideId = int.Parse(reader["pesticide_id"].ToString()),
                             Used = double.Parse(reader["used"].ToString()),
                         };
 
                         result.Add(tmp);
                     }
+                }
+
+                foreach (PesticideContent pc in result)
+                {
+                    List<PesticideMaster> master_list = GetPesticideMasters(pc.PesticideId);
+                    pc.PestcideMaster = new PesticideMaster(master_list[0]);
                 }
             }
             catch (Exception ex)
@@ -385,6 +382,7 @@ namespace WorkTaskApp.Models
             }
             return result;
         }
+
         #endregion SELECT
 
         #region EXECUTE_NONQUERY
@@ -410,152 +408,8 @@ namespace WorkTaskApp.Models
             }
 
         }
+
         #endregion EXECUTE_NONQUERY
-
-        #region INSERT
-
-        /// <summary>
-        /// 労働者マスタ登録
-        /// </summary>
-        /// <param name="workerMaster"></param>
-        public void RegisterWorkerMaster(WorkerMaster workerMaster)
-        {
-            try
-            {
-                StartTransaction();
-                this.command.CommandText = "INSERT INTO M_Worker(name) VALUES(?)";
-                this.command.Parameters.Clear();
-                this.command.Parameters.Add(new SQLiteParameter { Value = workerMaster.Name });
-                this.command.ExecuteNonQuery();
-                CommitTransaction();
-            }
-            catch (Exception ex)
-            {
-                RollBackTransaction();
-                throw new SQLiteException(ex.ToString());
-            }
-        }
-
-        /// <summary>
-        /// 労働者マスタ更新
-        /// </summary>
-        /// <param name="workerMaster"></param>
-        public void UpdateWorkerMaster(WorkerMaster workerMaster)
-        {
-            try
-            {
-                StartTransaction();
-                this.command.CommandText = "UPDATE M_Worker SET name = ? WHERE id = ?";
-                this.command.Parameters.Clear();
-                this.command.Parameters.Add(new SQLiteParameter { Value = workerMaster.Name });
-                this.command.Parameters.Add(new SQLiteParameter { Value = workerMaster.ID });
-                this.command.ExecuteNonQuery();
-                CommitTransaction();
-            }
-            catch (Exception ex)
-            {
-                RollBackTransaction();
-                throw new SQLiteException(ex.ToString());
-            }
-        }
-
-        /// <summary>
-        /// 労働者マスタ更新
-        /// </summary>
-        /// <param name="workerMaster"></param>
-        public void DeleteWorkerMaster(WorkerMaster workerMaster)
-        {
-            try
-            {
-                StartTransaction();
-                PrepareCommandParameter("DELETE FROM M_Worker WHERE id = ?", new List<object> { workerMaster.ID });
-                this.command.ExecuteNonQuery();
-                CommitTransaction();
-            }
-            catch (Exception ex)
-            {
-                RollBackTransaction();
-                throw new SQLiteException(ex.ToString());
-            }
-        }
-
-
-
-        /// <summary>
-        /// 日付・天気内容登録
-        /// </summary>
-        /// <param name="dateWeather"></param>
-        public void RegisterDateWeather(DateWeather dateWeather)
-        {
-            try
-            {
-                StartTransaction();
-                this.command.CommandText = "INSERT INTO T_DateWeather(weather, date) VALUES(?, ?)";
-                this.command.Parameters.Clear();
-                this.command.Parameters.Add(new SQLiteParameter { Value = dateWeather.Weather });
-                this.command.Parameters.Add(new SQLiteParameter { Value = dateWeather.WorkDate.ToString() });
-                this.command.ExecuteNonQuery();
-                CommitTransaction();
-            }
-            catch (Exception ex)
-            {
-                RollBackTransaction();
-                throw new SQLiteException(ex.ToString());
-            }
-        }
-
-        /// <summary>
-        /// 作業内容登録
-        /// </summary>
-        /// <param name="workContent"></param>
-        /// <param name="date_id"></param>
-        public void RegisterWorkContent(WorkContent workContent, int date_id)
-        {
-            try
-            {
-                StartTransaction();
-                this.command.CommandText = "INSERT INTO T_WorkContent(content, start_datetime, end_datetime, user_id, date_id) VALUES(?, ?, ?, ?, ?)";
-                this.command.Parameters.Clear();
-                this.command.Parameters.Add(new SQLiteParameter { Value = workContent.Content });
-                this.command.Parameters.Add(new SQLiteParameter { Value = workContent.StartWorkTime.ToString() });
-                this.command.Parameters.Add(new SQLiteParameter { Value = workContent.EndWorkTime.ToString() });
-                this.command.Parameters.Add(new SQLiteParameter { Value = workContent.UserId });
-                this.command.Parameters.Add(date_id);
-                this.command.ExecuteNonQuery();
-                CommitTransaction();
-            }
-            catch (Exception ex)
-            {
-                RollBackTransaction();
-                throw new SQLiteException(ex.ToString());
-            }
-        }
-
-        /// <summary>
-        /// 農薬内容登録
-        /// </summary>
-        /// <param name="pesticideContent"></param>
-        /// <param name="work_content_id"></param>
-        public void RegisterPesticideContent(PesticideContent pesticideContent, int work_content_id)
-        {
-            try
-            {
-                StartTransaction();
-                this.command.CommandText = "INSERT INTO T_PesticideContent(used, pesticide_id, work_content_id) VALUES(?, ?, ?)";
-                this.command.Parameters.Clear();
-                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideContent.Used });
-                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideContent.PestcideMaster.ID });
-                this.command.Parameters.Add(new SQLiteParameter { Value = work_content_id });
-                this.command.ExecuteNonQuery();
-                CommitTransaction();
-            }
-            catch (Exception ex)
-            {
-                RollBackTransaction();
-                throw new SQLiteException(ex.ToString());
-            }
-        }
-        #endregion INSERT
 
         #region IDisposableの実装
 
