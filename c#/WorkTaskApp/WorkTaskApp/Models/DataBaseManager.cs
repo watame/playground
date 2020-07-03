@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media.TextFormatting;
 using System.Xml.XPath;
+using System.Windows.Media.Animation;
+using System.Data;
 
 namespace WorkTaskApp.Models
 {
@@ -21,10 +23,23 @@ namespace WorkTaskApp.Models
     /// </summary>
     class DataBaseManager : IDisposable
     {
-        private SQLiteConnection connection;
-        private SQLiteCommand command;
         /// <summary>
-        /// プロパティ
+        /// DBへの接続のコマンドインスタンス
+        /// </summary>
+        private SQLiteConnection connection;
+
+        /// <summary>
+        /// クエリ実行用のコマンドインスタンス
+        /// </summary>
+        private SQLiteCommand command;
+
+        /// <summary>
+        /// トランザクション管理インスタンス
+        /// </summary>
+        private SQLiteTransaction transaction;
+
+        /// <summary>
+        /// 自身インスタンス（シングルトン用）
         /// </summary>
         private static DataBaseManager dbManager;
         public static DataBaseManager DBManager
@@ -37,25 +52,6 @@ namespace WorkTaskApp.Models
                 }
                 return dbManager;
             }
-        }
-
-        /// <summary>
-        /// データベースへ接続する
-        /// </summary>
-        /// <param name="dbFileName"></param>
-        public static void ConnectDB(string dbFileName)
-        {
-            dbManager = new DataBaseManager(dbFileName);
-        }
-
-        /// <summary>
-        /// データベースから切断する
-        /// </summary>
-        /// <param name="dbFileName"></param>
-        public static void DisConnectDB()
-        {
-            dbManager.Dispose();
-            dbManager = null;
         }
 
         /// <summary>
@@ -85,6 +81,116 @@ namespace WorkTaskApp.Models
             // データベースを展開する
             this.connection.Open();
         }
+
+        #region Utility
+
+        /// <summary>
+        /// データベースへ接続する
+        /// </summary>
+        /// <param name="dbFileName"></param>
+        public static void ConnectDB(string dbFileName)
+        {
+            dbManager = new DataBaseManager(dbFileName);
+        }
+
+        /// <summary>
+        /// データベースから切断する
+        /// </summary>
+        /// <param name="dbFileName"></param>
+        public static void DisConnectDB()
+        {
+            dbManager.Dispose();
+            dbManager = null;
+        }
+
+        #endregion Utility
+
+        #region TRANSACTION
+
+        /// <summary>
+        /// トランザクションの開始
+        /// </summary>
+        private void StartTransaction()
+        {
+            this.transaction = connection.BeginTransaction();
+        }
+
+        /// <summary>
+        /// トランザクションのコミット
+        /// </summary>
+        private void CommitTransaction()
+        {
+            this.transaction.Commit();
+            DisposeTransaction();
+        }
+
+        /// <summary>
+        /// トランザクションのロールバック
+        /// </summary>
+        private void RollBackTransaction()
+        {
+            this.transaction.Rollback();
+            DisposeTransaction();
+        }
+
+        /// <summary>
+        /// トランザクションの解放
+        /// </summary>
+        private void DisposeTransaction()
+        {
+            this.transaction.Dispose();
+            this.transaction = null;
+        }
+
+        #endregion TRANSACTION
+
+        #region PREPARE_STATEMENT
+        /// <summary>
+        /// パラメータの型をSQLiteの型として取得
+        /// </summary>
+        /// <param name="param">パラメータ（型は不明）</param>
+        /// <returns>SQLiteの型情報</returns>
+        private DbType GetDbType(object param)
+        {
+            if (param is int)
+            {
+                return DbType.Int32;
+            }
+            else if (param is string)
+            {
+                return DbType.String;
+            }
+            else if (param is double || param is float)
+            {
+                return DbType.Double;
+            }
+            else
+            {
+                throw new ArgumentException("引数に処理できない型が含まれています");
+            }
+
+        }
+
+        /// <summary>
+        /// 実行するコマンドの用意
+        /// </summary>
+        /// <param name="query">クエリ</param>
+        /// <param name="addParams">登録するパラメータの配列</param>
+        private void PrepareCommandParameter(string query, List<object> addParams)
+        {
+            // クエリの設定
+            this.command.CommandText = query;
+            // パラメータの設定
+            this.command.Parameters.Clear();
+            foreach (object param in addParams)
+            {
+                this.command.Parameters.Add(new SQLiteParameter { DbType = GetDbType(param), Value = param });
+            }
+            // パラメータを適用した状態を適用
+            this.command.Prepare();
+        }
+
+        #endregion PREPARE_STATEMENT
 
         #region SELECT
 
@@ -290,6 +396,7 @@ namespace WorkTaskApp.Models
         {
             try
             {
+                StartTransaction();
                 this.command.CommandText = "INSERT INTO M_Pesticide(name, unit, uri, description) VALUES(?, ?, ?, ?)";
                 this.command.Parameters.Clear();
                 this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Name });
@@ -297,9 +404,11 @@ namespace WorkTaskApp.Models
                 this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.URI });
                 this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Description });
                 this.command.ExecuteNonQuery();
+                CommitTransaction();
             }
             catch (Exception ex)
             {
+                RollBackTransaction();
                 throw new SQLiteException(ex.ToString());
             }
         }
@@ -312,6 +421,7 @@ namespace WorkTaskApp.Models
         {
             try
             {
+                StartTransaction();
                 this.command.CommandText = "UPDATE M_Pesticide SET name = ? , unit = ?, uri = ?, description = ? WHERE id = ?";
                 this.command.Parameters.Clear();
                 this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Name });
@@ -320,9 +430,31 @@ namespace WorkTaskApp.Models
                 this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Description });
                 this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.ID });
                 this.command.ExecuteNonQuery();
+                CommitTransaction();
             }
             catch (Exception ex)
             {
+                RollBackTransaction();
+                throw new SQLiteException(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 農薬マスタ削除
+        /// </summary>
+        /// <param name="pesticideMaster">農薬マスタクラス</param>
+        public void DeletePesticideMaster(PesticideMaster pesticideMaster)
+        {
+            try
+            {
+                StartTransaction();
+                PrepareCommandParameter("DELETE FROM M_Pesticide WHERE id = ?", new List<object> { pesticideMaster.ID });
+                this.command.ExecuteNonQuery();
+                CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                RollBackTransaction();
                 throw new SQLiteException(ex.ToString());
             }
         }
@@ -335,13 +467,16 @@ namespace WorkTaskApp.Models
         {
             try
             {
+                StartTransaction();
                 this.command.CommandText = "INSERT INTO M_Worker(name) VALUES(?)";
                 this.command.Parameters.Clear();
                 this.command.Parameters.Add(new SQLiteParameter { Value = workerMaster.Name });
                 this.command.ExecuteNonQuery();
+                CommitTransaction();
             }
             catch (Exception ex)
             {
+                RollBackTransaction();
                 throw new SQLiteException(ex.ToString());
             }
         }
@@ -354,17 +489,41 @@ namespace WorkTaskApp.Models
         {
             try
             {
+                StartTransaction();
                 this.command.CommandText = "UPDATE M_Worker SET name = ? WHERE id = ?";
                 this.command.Parameters.Clear();
                 this.command.Parameters.Add(new SQLiteParameter { Value = workerMaster.Name });
                 this.command.Parameters.Add(new SQLiteParameter { Value = workerMaster.ID });
                 this.command.ExecuteNonQuery();
+                CommitTransaction();
             }
             catch (Exception ex)
             {
+                RollBackTransaction();
                 throw new SQLiteException(ex.ToString());
             }
         }
+
+        /// <summary>
+        /// 労働者マスタ更新
+        /// </summary>
+        /// <param name="workerMaster"></param>
+        public void DeleteWorkerMaster(WorkerMaster workerMaster)
+        {
+            try
+            {
+                StartTransaction();
+                PrepareCommandParameter("DELETE FROM M_Worker WHERE id = ?", new List<object> { workerMaster.ID });
+                this.command.ExecuteNonQuery();
+                CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                RollBackTransaction();
+                throw new SQLiteException(ex.ToString());
+            }
+        }
+
 
 
         /// <summary>
@@ -375,14 +534,17 @@ namespace WorkTaskApp.Models
         {
             try
             {
+                StartTransaction();
                 this.command.CommandText = "INSERT INTO T_DateWeather(weather, date) VALUES(?, ?)";
                 this.command.Parameters.Clear();
                 this.command.Parameters.Add(new SQLiteParameter { Value = dateWeather.Weather });
                 this.command.Parameters.Add(new SQLiteParameter { Value = dateWeather.WorkDate.ToString() });
                 this.command.ExecuteNonQuery();
+                CommitTransaction();
             }
             catch (Exception ex)
             {
+                RollBackTransaction();
                 throw new SQLiteException(ex.ToString());
             }
         }
@@ -396,6 +558,7 @@ namespace WorkTaskApp.Models
         {
             try
             {
+                StartTransaction();
                 this.command.CommandText = "INSERT INTO T_WorkContent(content, start_datetime, end_datetime, user_id, date_id) VALUES(?, ?, ?, ?, ?)";
                 this.command.Parameters.Clear();
                 this.command.Parameters.Add(new SQLiteParameter { Value = workContent.Content });
@@ -404,9 +567,11 @@ namespace WorkTaskApp.Models
                 this.command.Parameters.Add(new SQLiteParameter { Value = workContent.UserId });
                 this.command.Parameters.Add(date_id);
                 this.command.ExecuteNonQuery();
+                CommitTransaction();
             }
             catch (Exception ex)
             {
+                RollBackTransaction();
                 throw new SQLiteException(ex.ToString());
             }
         }
@@ -420,24 +585,33 @@ namespace WorkTaskApp.Models
         {
             try
             {
+                StartTransaction();
                 this.command.CommandText = "INSERT INTO T_PesticideContent(used, pesticide_id, work_content_id) VALUES(?, ?, ?)";
                 this.command.Parameters.Clear();
                 this.command.Parameters.Add(new SQLiteParameter { Value = pesticideContent.Used });
                 this.command.Parameters.Add(new SQLiteParameter { Value = pesticideContent.PestcideMaster.ID });
                 this.command.Parameters.Add(new SQLiteParameter { Value = work_content_id });
                 this.command.ExecuteNonQuery();
+                CommitTransaction();
             }
             catch (Exception ex)
             {
+                RollBackTransaction();
                 throw new SQLiteException(ex.ToString());
             }
         }
         #endregion INSERT
 
+        #region IDisposableの実装
+
         public void Dispose()
         {
+            DisposeTransaction();
             this.command.Dispose();
             this.connection.Close();
+            this.connection.Dispose();
         }
+
+        #endregion IDisposableの実装
     }
 }

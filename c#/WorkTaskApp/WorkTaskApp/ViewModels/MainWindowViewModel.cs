@@ -97,6 +97,7 @@ namespace WorkTaskApp.ViewModels
         /// </summary>
         public DelegateCommand RegisterPesticideClicked { get; private set; }
         public DelegateCommand UpdatePesticideClicked { get; private set; }
+        public DelegateCommand DeletePesticideClicked { get; private set; }
         public DelegateCommand<PesticideMaster> PesticideMasterClicked { get; private set; }
 
         /// <summary>
@@ -104,6 +105,7 @@ namespace WorkTaskApp.ViewModels
         /// </summary>
         public DelegateCommand RegisterWorkerClicked { get; private set; }
         public DelegateCommand UpdateWorkerClicked { get; private set; }
+        public DelegateCommand DeleteWorkerClicked { get; private set; }
         public DelegateCommand<WorkerMaster> WorkerMasterClicked { get; private set; }
 
         /// <summary>
@@ -139,6 +141,10 @@ namespace WorkTaskApp.ViewModels
             UpdatePesticideClicked = new DelegateCommand(
                 () => UpdatePesticideMaster());
 
+            // 農薬マスタ削除コマンド登録
+            DeletePesticideClicked = new DelegateCommand(
+                () => DeletePesticideMaster());
+
             // 農薬マスタ読み込みコマンド登録(クリックで取得したインスタンスで登録用インスタンスを上書き)
             PesticideMasterClicked = new DelegateCommand<PesticideMaster>(
                 (readPesticide) => RegisterPesticide = new PesticideMaster(readPesticide));
@@ -150,6 +156,10 @@ namespace WorkTaskApp.ViewModels
             // 作業者マスタ更新コマンド登録
             UpdateWorkerClicked = new DelegateCommand(
                 () => UpdateWorkerMaster());
+
+            // 作業者マスタ削除コマンド登録
+            DeleteWorkerClicked = new DelegateCommand(
+                () => DeleteWorkerMaster());
 
             // 作業者マスタ読み込みコマンド登録(クリックで取得したインスタンスで登録用インスタンスを上書き)
             WorkerMasterClicked = new DelegateCommand<WorkerMaster>(
@@ -199,6 +209,20 @@ namespace WorkTaskApp.ViewModels
         }
 
         /// <summary>
+        /// 農薬マスタ削除コールバック
+        /// </summary>
+        private void DeletePesticideMaster()
+        {
+            if (0 == registerPesticide.ID)
+            {
+                return;
+            }
+            DataBaseManager.DBManager.DeletePesticideMaster(RegisterPesticide);
+            PesticideMasters = new ObservableCollection<PesticideMaster>(DataBaseManager.DBManager.GetPesticideMaster());
+            RegisterPesticide = new PesticideMaster();
+        }
+
+        /// <summary>
         /// 作業者マスタ登録コールバック
         /// </summary>
         private void RegisterWorkerMaster()
@@ -218,6 +242,17 @@ namespace WorkTaskApp.ViewModels
                 return;
             }
             DataBaseManager.DBManager.UpdateWorkerMaster(RegisterWorker);
+            WorkerMasters = new ObservableCollection<WorkerMaster>(DataBaseManager.DBManager.GetWorkerMaster());
+            RegisterWorker = new WorkerMaster();
+        }
+
+        private void DeleteWorkerMaster()
+        {
+            if (0 == RegisterWorker.ID)
+            {
+                return;
+            }
+            DataBaseManager.DBManager.DeleteWorkerMaster(RegisterWorker);
             WorkerMasters = new ObservableCollection<WorkerMaster>(DataBaseManager.DBManager.GetWorkerMaster());
             RegisterWorker = new WorkerMaster();
         }
