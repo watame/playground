@@ -10,7 +10,7 @@ namespace WorkTaskApp.Models
         /// ID
         /// </summary>
         private int id;
-        public int ID
+        public int Id
         {
             get { return id; }
             set { SetProperty(ref id, value); }
@@ -61,7 +61,7 @@ namespace WorkTaskApp.Models
         /// </summary>
         public PesticideMaster()
         {
-            this.ID = 0;
+            this.Id = 0;
             this.Name = "";
             this.Unit = "";
             this.URI = "";
@@ -74,12 +74,14 @@ namespace WorkTaskApp.Models
         /// <param name="pesticideMaster"></param>
         public PesticideMaster(PesticideMaster pesticideMaster)
         {
-            this.ID = pesticideMaster.ID;
+            this.Id = pesticideMaster.Id;
             this.Name = pesticideMaster.Name;
             this.Unit = pesticideMaster.Unit;
             this.URI = pesticideMaster.URI;
             this.Description = pesticideMaster.Description;
         }
+
+        #region IDataBase実装
 
         /// <summary>
         /// 登録可能チェック
@@ -126,7 +128,7 @@ namespace WorkTaskApp.Models
         /// </summary>
         public bool UpdateDbRecord()
         {
-            if (0 == this.ID || !CanRegister())
+            if (0 == this.Id || !CanRegister())
             {
                 return false;
             }
@@ -138,7 +140,7 @@ namespace WorkTaskApp.Models
                 this.Unit,
                 this.URI,
                 this.Description,
-                this.ID
+                this.Id
             };
             DataBaseManager.DBManager.ExecuteNonQuery(query, addParams);
 
@@ -150,7 +152,7 @@ namespace WorkTaskApp.Models
         /// </summary>
         public bool DeleteDbRecord()
         {
-            if (0 == this.ID)
+            if (0 == this.Id)
             {
                 return false;
             }
@@ -158,12 +160,14 @@ namespace WorkTaskApp.Models
             string query = "DELETE FROM M_Pesticide WHERE id = ?";
             List<object> addParams = new List<object>
             {
-                this.ID
+                this.Id
             };
             DataBaseManager.DBManager.ExecuteNonQuery(query, addParams);
 
             return true;
         }
+
+        #endregion IDataBase実装
 
         /// <summary>
         /// ListView用にフォーマットした文字列を戻す
