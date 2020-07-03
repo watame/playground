@@ -387,77 +387,32 @@ namespace WorkTaskApp.Models
         }
         #endregion SELECT
 
+        #region EXECUTE_NONQUERY
+
+        /// <summary>
+        /// 戻り値のないクエリ(INSERT, UPDATE, DELETE)を実行する
+        /// </summary>
+        /// <param name="query">クエリ</param>
+        /// <param name="addParams">登録するパラメータの配列</param>
+        public void ExecuteNonQuery(string query, List<object> addParams)
+        {
+            try
+            {
+                StartTransaction();
+                PrepareCommandParameter(query, addParams);
+                this.command.ExecuteNonQuery();
+                CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                RollBackTransaction();
+                throw new SQLiteException(ex.ToString());
+            }
+
+        }
+        #endregion EXECUTE_NONQUERY
+
         #region INSERT
-        /// <summary>
-        /// 農薬マスタ登録
-        /// </summary>
-        /// <param name="pesticideMaster"></param>
-        public void RegisterPesticideMaster(PesticideMaster pesticideMaster)
-        {
-            try
-            {
-                StartTransaction();
-                this.command.CommandText = "INSERT INTO M_Pesticide(name, unit, uri, description) VALUES(?, ?, ?, ?)";
-                this.command.Parameters.Clear();
-                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Name });
-                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Unit });
-                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.URI });
-                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Description });
-                this.command.ExecuteNonQuery();
-                CommitTransaction();
-            }
-            catch (Exception ex)
-            {
-                RollBackTransaction();
-                throw new SQLiteException(ex.ToString());
-            }
-        }
-
-        /// <summary>
-        /// 農薬マスタ更新
-        /// </summary>
-        /// <param name="pesticideMaster"></param>
-        public void UpdatePesticideMaster(PesticideMaster pesticideMaster)
-        {
-            try
-            {
-                StartTransaction();
-                this.command.CommandText = "UPDATE M_Pesticide SET name = ? , unit = ?, uri = ?, description = ? WHERE id = ?";
-                this.command.Parameters.Clear();
-                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Name });
-                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Unit });
-                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.URI });
-                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.Description });
-                this.command.Parameters.Add(new SQLiteParameter { Value = pesticideMaster.ID });
-                this.command.ExecuteNonQuery();
-                CommitTransaction();
-            }
-            catch (Exception ex)
-            {
-                RollBackTransaction();
-                throw new SQLiteException(ex.ToString());
-            }
-        }
-
-        /// <summary>
-        /// 農薬マスタ削除
-        /// </summary>
-        /// <param name="pesticideMaster">農薬マスタクラス</param>
-        public void DeletePesticideMaster(PesticideMaster pesticideMaster)
-        {
-            try
-            {
-                StartTransaction();
-                PrepareCommandParameter("DELETE FROM M_Pesticide WHERE id = ?", new List<object> { pesticideMaster.ID });
-                this.command.ExecuteNonQuery();
-                CommitTransaction();
-            }
-            catch (Exception ex)
-            {
-                RollBackTransaction();
-                throw new SQLiteException(ex.ToString());
-            }
-        }
 
         /// <summary>
         /// 労働者マスタ登録

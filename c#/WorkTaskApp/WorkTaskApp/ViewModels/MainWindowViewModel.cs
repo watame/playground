@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Threading;
+using System.Windows;
 using System.Windows.Navigation;
 using WorkTaskApp.Models;
 
@@ -189,7 +190,11 @@ namespace WorkTaskApp.ViewModels
         /// </summary>
         private void RegisterPesticideMaster()
         {
-            DataBaseManager.DBManager.RegisterPesticideMaster(RegisterPesticide);
+            if(false == RegisterPesticide.RegisterDbRecord())
+            {
+                MessageBox.Show("入力情報に不備があります");
+                return;
+            }
             PesticideMasters = new ObservableCollection<PesticideMaster>(DataBaseManager.DBManager.GetPesticideMaster());
             RegisterPesticide = new PesticideMaster();
         }
@@ -199,11 +204,11 @@ namespace WorkTaskApp.ViewModels
         /// </summary>
         private void UpdatePesticideMaster()
         {
-            if (0 == registerPesticide.ID)
+            if(false == RegisterPesticide.UpdateDbRecord())
             {
+                MessageBox.Show("入力情報に不備があります");
                 return;
             }
-            DataBaseManager.DBManager.UpdatePesticideMaster(RegisterPesticide);
             PesticideMasters = new ObservableCollection<PesticideMaster>(DataBaseManager.DBManager.GetPesticideMaster());
             RegisterPesticide = new PesticideMaster();
         }
@@ -213,11 +218,11 @@ namespace WorkTaskApp.ViewModels
         /// </summary>
         private void DeletePesticideMaster()
         {
-            if (0 == registerPesticide.ID)
+            if(false == RegisterPesticide.DeleteDbRecord())
             {
+                MessageBox.Show("IDに不備があります");
                 return;
             }
-            DataBaseManager.DBManager.DeletePesticideMaster(RegisterPesticide);
             PesticideMasters = new ObservableCollection<PesticideMaster>(DataBaseManager.DBManager.GetPesticideMaster());
             RegisterPesticide = new PesticideMaster();
         }
