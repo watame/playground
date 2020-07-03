@@ -65,10 +65,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Models\DataBaseManager.cs" />
-    <Compile Include="Models\DateWeather.cs" />
+    <Compile Include="Models\IDataBase.cs" />
     <Compile Include="Models\PesticideContent.cs" />
     <Compile Include="Models\PesticideMaster.cs" />
-    <Compile Include="Models\RecordByDate.cs" />
     <Compile Include="Models\WorkContent.cs" />
     <Compile Include="Models\WorkerMaster.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
