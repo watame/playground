@@ -123,7 +123,7 @@ namespace WorkTaskApp.Models
         /// <returns>フォーマットされた文字列</returns>
         public override string ToString()
         {
-            return String.Format("作業名：{0}", this.Name);
+            return String.Format("作業者：{0}", this.Name);
         }
 
     }
