@@ -20,6 +20,7 @@ namespace WorkTaskApp.Models
     /// 参考サイト
     /// http://nprogram.hatenablog.com/entry/2018/06/10/231435
     /// https://jikkenjo.net/391.html
+    /// https://memo-c-sharp.blogspot.com/2016/01/sqlitedb.html
     /// </summary>
     class DataBaseManager : IDisposable
     {
@@ -65,8 +66,8 @@ namespace WorkTaskApp.Models
                 throw new System.IO.FileNotFoundException("指定されたDBが見つかりません");
             }
 
-            // DBへの接続
-            var builder = new SQLiteConnectionStringBuilder() { DataSource = dbFileName };
+            // DBへの接続(外部キー制約を適用)
+            var builder = new SQLiteConnectionStringBuilder() { DataSource = dbFileName, ForeignKeys = true };
             if (null == (this.connection = new SQLiteConnection(builder.ToString())))
             {
                 throw new SQLiteException("DB接続に失敗しました");
@@ -406,7 +407,6 @@ namespace WorkTaskApp.Models
                 RollBackTransaction();
                 throw new SQLiteException(ex.ToString());
             }
-
         }
 
         #endregion EXECUTE_NONQUERY
