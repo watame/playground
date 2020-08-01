@@ -1,0 +1,433 @@
+﻿# A5:ER FORMAT:14
+# A5:ER ENCODING:UTF8
+# A5:ER Mk-1 Copyright (C)2007 m.matsubara
+# A5:SQL Mk-2 Copyright (C)1997 m.matsubara
+#  https://a5m2.mmatsubara.com
+
+[Manager]
+ProjectName=
+Author=
+MaxEntityRowShow=1000
+ReadOnlyRecommend=0
+Page=Main
+PageInfo="Main",2,"A3Landscape",$FFFFFF
+LogicalView=1
+DecodeDomain=0
+ViewModePageIndividually=1
+ViewMode=2
+ViewFormat=0
+UseNondependenceDashLine=0
+FontName=Tahoma
+FontSize=6
+PaperSize=A4Landscape
+HeaderLeft=
+HeaderCenter=
+HeaderRight=
+FooterLeft=
+FooterCenter=
+FooterRight=
+ShowPageoutRelation=1
+DefaultPkName=%0:s_PKC
+DefaultPkIndexName=%0:s_PKI
+DefaultIndexName=%0:s_IX%1:d
+DefaultFkName=%0:s_FK%1:d
+SqlSeparator=0
+UpperCaseKeyword=0
+ShowTag=1
+ShowCommonAttributes=0
+
+[Entity]
+PName=drips
+LName=drips
+Comment=
+TableOption=
+Page=MAIN
+Left=1400
+Top=1400
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="minutes","minutes","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="work_content_id","work_content_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="pesticide_id","pesticide_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="pesticide_unit","pesticide_unit","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",1400,1400
+ZOrder=-5
+
+[Entity]
+PName=pesticide_contents
+LName=pesticide_contents
+Comment=
+TableOption=
+Page=MAIN
+Left=1400
+Top=1150
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="water","water","REAL","NOT NULL",,"","",$FFFFFFFF,""
+Field="water_unit_id","water_unit_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="work_content_id","work_content_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="pesticide_id","pesticide_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="pesticide_unit_id","pesticide_unit_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",1400,1150
+ZOrder=-6
+
+[Entity]
+PName=pesticides
+LName=pesticides
+Comment=
+TableOption=
+Page=MAIN
+Left=1000
+Top=1150
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="name","name","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+Field="uri","uri","TEXT",,,"","",$FFFFFFFF,""
+Field="description","description","TEXT",,,"","",$FFFFFFFF,""
+Index=sqlite_autoindex_pesticides_1=1,name
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",1000,1150,134,102
+ZOrder=-7
+
+[Entity]
+PName=dispersals
+LName=dispersals
+Comment=
+TableOption=
+Page=MAIN
+Left=1400
+Top=1600
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="water","water","REAL","NOT NULL",,"","",$FFFFFFFF,""
+Field="kind","kind","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="water_unit_id","water_unit_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="work_content_id","work_content_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="pesticide_id","pesticide_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="pesticide_unit_id","pesticide_unit_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",1400,1600
+ZOrder=-4
+
+[Entity]
+PName=breeds
+LName=breeds
+Comment=
+TableOption=
+Page=MAIN
+Left=1000
+Top=850
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="name","name","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+Field="uri","uri","TEXT",,,"","",$FFFFFFFF,""
+Field="description","description","TEXT",,,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",1000,850
+ZOrder=-1
+
+[Entity]
+PName=co2_contents
+LName=co2_contents
+Comment=
+TableOption=
+Page=MAIN
+Left=2300
+Top=500
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="started_at","started_at","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+Field="ended_at","ended_at","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+Field="unit_id","unit_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",2300,500
+ZOrder=-2
+
+[Entity]
+PName=companies
+LName=companies
+Comment=
+TableOption=
+Page=MAIN
+Left=1000
+Top=600
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="name","name","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+Field="uri","uri","TEXT",,,"","",$FFFFFFFF,""
+Field="description","description","TEXT",,,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",1000,600
+ZOrder=-3
+
+[Entity]
+PName=weathers
+LName=weathers
+Comment=
+TableOption=
+Page=MAIN
+Left=1400
+Top=900
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="date","date","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+Field="weather","weather","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+Field="highest_temperature","highest_temperature","REAL","NOT NULL",,"","",$FFFFFFFF,""
+Field="lowest_temperature","lowest_temperature","REAL","NOT NULL",,"","",$FFFFFFFF,""
+Field="work_content_id","work_content_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",1400,900
+ZOrder=-12
+
+[Entity]
+PName=work_contents
+LName=work_contents
+Comment=
+TableOption=
+Page=MAIN
+Left=1800
+Top=700
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="content","content","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+Field="start_datetime","start_datetime","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+Field="end_datetime","end_datetime","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+Field="user_id","user_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",1800,700,159,126
+ZOrder=-13
+
+[Entity]
+PName=workers
+LName=workers
+Comment=
+TableOption=
+Page=MAIN
+Left=2050
+Top=800
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="name","name","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",2050,800
+ZOrder=-14
+
+[Entity]
+PName=units
+LName=units
+Comment=
+TableOption=
+Page=MAIN
+Left=1000
+Top=1500
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="name","name","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+Field="is_pesticide","is_pesticide","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",1000,1500
+ZOrder=-11
+
+[Entity]
+PName=pollinations
+LName=pollinations
+Comment=
+TableOption=
+Page=MAIN
+Left=1400
+Top=500
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="number","number","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="thinning_number","thinning_number","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="work_content_id","work_content_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="breed_id","breed_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",1400,500
+ZOrder=-8
+
+[Entity]
+PName=shipments
+LName=shipments
+Comment=
+TableOption=
+Page=MAIN
+Left=1400
+Top=700
+Field="id","id","INTEGER",,0,"","",$FFFFFFFF,""
+Field="date","date","TEXT","NOT NULL",,"","",$FFFFFFFF,""
+Field="volume","volume","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="work_content_id","work_content_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="company_id","company_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+Field="breed_id","breed_id","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",1400,700
+ZOrder=-9
+
+[Entity]
+PName=sqlite_sequence
+LName=sqlite_sequence
+Comment=
+TableOption=
+Page=MAIN
+Left=2500
+Top=500
+Field="name","name","",,,"","",$FFFFFFFF,""
+Field="seq","seq","",,,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+Position="MAIN",2500,500
+ZOrder=-10
+
+[Line]
+Page=Main
+Left=1585
+Top=594
+ZOrder=0
+Width=218
+Height=118
+
+[Line]
+Page=Main
+Left=1571
+Top=794
+ZOrder=1
+Width=236
+Height=-78
+
+[Line]
+Page=Main
+Left=1606
+Top=1042
+ZOrder=2
+Width=198
+Height=-324
+
+[Line]
+Page=Main
+Left=1575
+Top=1236
+ZOrder=3
+Width=229
+Height=-515
+
+[Line]
+Page=Main
+Left=1573
+Top=1466
+ZOrder=4
+Width=235
+Height=-746
+
+[Line]
+Page=Main
+Left=1569
+Top=1724
+ZOrder=5
+Width=238
+Height=-1012
+
+[Line]
+Page=Main
+Left=1946
+Top=818
+ZOrder=6
+Width=107
+Height=0
+
+[Line]
+Page=Main
+Left=1123
+Top=611
+ZOrder=8
+Width=291
+Height=208
+
+[Line]
+Page=Main
+Left=1406
+Top=619
+ZOrder=9
+Width=-282
+Height=238
+
+[Line]
+Page=Main
+Left=1408
+Top=849
+ZOrder=10
+Width=-279
+Height=16
+
+[Line]
+Page=Main
+Left=1406
+Top=1264
+ZOrder=11
+Width=-284
+Height=-98
+
+[Line]
+Page=Main
+Left=1404
+Top=1494
+ZOrder=12
+Width=-274
+Height=-328
+
+[Line]
+Page=Main
+Left=1406
+Top=1742
+ZOrder=13
+Width=-282
+Height=-582
+
+[Line]
+Page=Main
+Left=1410
+Top=1290
+ZOrder=14
+Width=-283
+Height=219
+
+[Line]
+Page=Main
+Left=1412
+Top=1516
+ZOrder=15
+Width=-292
+Height=0
+
+[Line]
+Page=Main
+Left=1406
+Top=1760
+ZOrder=16
+Width=-272
+Height=-242
+
+[Line]
+Page=Main
+Left=1410
+Top=1695
+ZOrder=17
+Width=-278
+Height=-188
