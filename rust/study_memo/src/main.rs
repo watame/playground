@@ -122,7 +122,7 @@ fn enum_memo() {
 
 // 引数が0以外の場合にSomeに値を入れたOption列挙体を戻す
 fn return_option(some_val: u32) -> Option<u32> {
-    if some_val == 0{
+    if some_val == 0 {
         None
     } else {
         Some(some_val)
@@ -140,8 +140,22 @@ fn option_memo() {
     println!("result_some: {:?}", result_some);
 }
 
+// and_thenの時に呼び出される関数
+fn and_then_func(ok_val: u32) -> Result<u32, String> {
+    println!("ok_val:{}", ok_val);
+    Ok(111)
+}
 
-fn result_memo(){
+// ?の時に呼び出される関数
+// ?を利用して、Okの場合に値を展開、Errの場合にErr値をreturnできる
+fn question_func(result: Result<u32, String>) -> Result<u32, String> {
+    // Errの値が渡された場合は変数代入時点でErrの値をReturnする
+    let ok_result = result?;
+    println!("ok_val:{}", ok_result);
+    Ok(222)
+}
+
+fn result_memo() {
     // Resultは「正常値」の'Ok'と、「エラー値」の'Err'を表現できる列挙体
     // パターンマッチングでエラー処理をすることが多い
 
@@ -155,7 +169,7 @@ fn result_memo(){
     if let Ok(val) = result_1 {
         println!("val: {}", val);
     }
-    if let Ok(val) = result_2 {
+    if let Ok(_val) = result_2 {
         println!("this block not execute;");
     }
 
@@ -169,4 +183,33 @@ fn result_memo(){
         Ok(val) => println!("val: {}", val),
         Err(err) => println!("err: {}", err),
     }
+
+    // matchやlet ifはネストが深くなるため、unwrap-orを利用することが多い
+    // unwrap-orは、Resultの保持する値がOkで有ればOkに格納されている値を、Errの場合は引数として与えた値を戻す
+    let result_3: Result<u32, String> = Ok(2);
+    let result_4: Result<u32, String> = Err(String::from("error_2"));
+    // result_3はOkの値を保持しているので、2が戻される
+    println!("return Ok value:{}", result_3.unwrap_or(1));
+    // result_4はErrの値を保持しているので、引数に与えた99が戻される
+    println!("return Err value:{}", result_4.unwrap_or(99));
+
+    // Okの値の場合にだけ関数を処理したい場合は、and_thenが利用可能
+    let result_5: Result<u32, String> = Ok(3);
+    let result_6: Result<u32, String> = Err(String::from("error_3"));
+    // result_3はOkの値を保持しているので、関数が実行される
+    //let next_result_5 = result_5.and_then(and_then_func);
+    println!("next_result_5:{:?}", result_5.and_then(and_then_func));
+    // result_4はErrの値を保持しているので、関数が実行されない（保持しているErrがそのまま戻される）
+    println!("next_result_6:{:?}", result_6.and_then(and_then_func));
+
+    // ?を利用して、Okの場合に値を展開、Errの場合にErr値をreturnできる
+    // 関数内で利用されることが多い
+    let result_7: Result<u32, String> = Ok(4);
+    let result_8: Result<u32, String> = Err(String::from("error_4"));
+    let next_result_7 = question_func(result_7);
+    let next_result_8 = question_func(result_8);
+    // result_3はOkの値を保持しているので、2が戻される
+    println!("return next_result_7 value:{:?}", next_result_7);
+    // result_4はErrの値を保持しているので、引数に与えた99が戻される
+    println!("return next_result_8 value:{:?}", next_result_8);
 }
