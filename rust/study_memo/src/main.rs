@@ -13,6 +13,10 @@ fn main() {
     option_memo();
     println!("start result_memo!");
     result_memo();
+    println!("start vec_memo!");
+    vec_memo();
+    println!("start box_memo!");
+    box_memo();
 }
 
 fn str_string_memo() {
@@ -210,6 +214,60 @@ fn result_memo() {
     let next_result_8 = question_func(result_8);
     // result_3はOkの値を保持しているので、2が戻される
     println!("return next_result_7 value:{:?}", next_result_7);
-    // result_4はErrの値を保持しているので、引数に与えた99が戻される
+    // result_4はErrの値を保持しているので、引数に与えた"error_4"が戻される
     println!("return next_result_8 value:{:?}", next_result_8);
+}
+
+fn vec_memo() {
+    // Veｃは内部要素の数を増減させることが出来る（配列は固定）
+    // "vec!"マクロで初期化要素を指定して実体の作成が可能
+    // [vec] https://doc.rust-lang.org/std/vec/struct.Vec.html
+    let mut vec_1 = vec![0, 1, 2, 3, 4];
+    println!("before push: {:?}", vec_1);
+
+    // push, popで最後尾の要素の追加、取得ができる
+    vec_1.pop();
+    println!("after pop: {:?}", vec_1);
+    vec_1.push(5);
+    println!("after push: {:?}", vec_1);
+
+    // インデックス外の要素にアクセスすると例外が発生する
+    // println!("this access is panic!:{}", vec_1[10]);
+    // -> 'index out of bounds: the len is 5 but the index is 10', src\main.rs:233:42
+
+    // インデックス外の要素にアクセスしても例外を発生させないようにgetを利用すると良い
+    // 有効なインデックスの場合はその値を、不正なインデックスの場合はNoneを戻す
+    // [get] https://doc.rust-lang.org/std/vec/struct.Vec.html#method.get
+    println!("this access is ok:{:?}", vec_1.get(10));
+
+    // forを使って各要素を1つ1つ取得するのも分かりやすい
+    for elem in &vec_1 {
+        println!("value: {}", elem);
+    }
+}
+
+// 1byteの文字列を標準出力に表示する関数
+// 引数のサイズがコンパイル時に不定でも良いようにBoxのuint8ビット(1byte)配列型を指定する
+fn byte_print(show_string: Box<[u8]>) {
+    println!("{:?}", show_string);
+}
+
+fn box_memo() {
+    // Boxは任意のヒープ領域へポインタをスタック領域に確保する変数
+    // -> Rustの値は大体スタック領域に確保される
+    //    下から上にメモリ領域を積み上げて、上から順に開放していく領域
+    //    なので、予めメモリ領域のサイズを固定で指定する必要がある（malloc等で割り当てる）
+    //    ※順番も領域も分かっているのでめちゃくちゃ早い
+    // ヒープ領域は必要なときに必要なサイズ分の領域を確保し、開放も任意のタイミングで順番関係なく開放できる
+    // ※でも遅い
+    // コンパイル時に領域のサイズが分からない変数等に利用できる
+
+    // 任意サイズの文字列を表示する
+    let string_array = [b't', b'e', b's', b't'];
+    byte_print(Box::new(string_array));
+    // 8bit以上の配列を与えても、printのはポインタを持つだけなのでサイズオーバー等のエラーはでない
+    let string_array = [
+        b't', b'e', b's', b't', b't', b't', b't', b't', b't', b't', b't', b't', b't',
+    ];
+    byte_print(Box::new(string_array));
 }
