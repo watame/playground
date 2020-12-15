@@ -1,7 +1,7 @@
 ### 概要
 
 自作キーボード mint60 の ファームウェア です。
-[QMK COnfigurator](https://config.qmk.fm/#/mint60/LAYOUT)を利用し、GUIでファームウェアを作成しました。
+[QMK Configurator](https://config.qmk.fm/#/mint60/LAYOUT)を利用し、GUIでファームウェアを作成しました。
 
 ### キーマップ
 
