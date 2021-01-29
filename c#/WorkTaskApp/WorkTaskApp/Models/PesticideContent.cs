@@ -65,8 +65,7 @@ namespace WorkTaskApp.Models
         /// <returns>フォーマットされた文字列</returns>
         public override string ToString()
         {
-            //return String.Format("{0}, {1} {2}", pestcideMaster.Name, Used, pestcideMaster.Unit);
-            return String.Format("{0}, {1} {2}", pestcideMaster.Name, Used, pestcideMaster.Unit);
+            return String.Format("{0}, {1} {2}", PestcideMaster.Name, Used, PestcideMaster.Unit);
         }
 
         #region IDataBase実装

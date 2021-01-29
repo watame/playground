@@ -195,7 +195,7 @@ namespace WorkTaskApp.ViewModels
         /// </summary>
         public MainWindowViewModel()
         {
-            DataBaseManager.ConnectDB("test.db");
+            DataBaseManager.ConnectDB("WorkTaskApp.db");
             WorkContents = new ObservableCollection<WorkContent>(DataBaseManager.DBManager.GetWorkContents());
             PesticideMasters = new ObservableCollection<PesticideMaster>(DataBaseManager.DBManager.GetPesticideMasters());
             WorkerMasters = new ObservableCollection<WorkerMaster>(DataBaseManager.DBManager.GetWorkerMasters());
@@ -441,6 +441,7 @@ namespace WorkTaskApp.ViewModels
             }
             PesticideMasters = new ObservableCollection<PesticideMaster>(DataBaseManager.DBManager.GetPesticideMasters());
             RegisterPesticide = new PesticideMaster();
+            PesticideMasterIndex = 0;
         }
 
         /// <summary>
@@ -453,8 +454,20 @@ namespace WorkTaskApp.ViewModels
                 MessageBox.Show("入力情報に不備があります");
                 return;
             }
+            // バッファで保持している項目がある場合は、DB更新のタイミングで保持している内容を変更する
+            List<PesticideContent> tmp = new List<PesticideContent>();
+            foreach (PesticideContent pc in WorkContent.PesticideContents)
+            {
+                PesticideContent tmpPc = new PesticideContent(pc);
+                if(pc.PesticideId == RegisterPesticide.Id)
+                {
+                    pc.PestcideMaster = new PesticideMaster(RegisterPesticide);
+                }
+                tmp.Add(tmpPc);
+            }
             PesticideMasters = new ObservableCollection<PesticideMaster>(DataBaseManager.DBManager.GetPesticideMasters());
             RegisterPesticide = new PesticideMaster();
+            PesticideMasterIndex = 0;
         }
 
         /// <summary>
@@ -467,8 +480,11 @@ namespace WorkTaskApp.ViewModels
                 MessageBox.Show("IDに不備があります");
                 return;
             }
+            // バッファで保持している項目がある場合は、その項目を除いたリストを保持する
+            WorkContent.PesticideContents = new ObservableCollection<PesticideContent>(WorkContent.PesticideContents.Where(pesticide => pesticide.PesticideId != RegisterPesticide.Id));
             PesticideMasters = new ObservableCollection<PesticideMaster>(DataBaseManager.DBManager.GetPesticideMasters());
             RegisterPesticide = new PesticideMaster();
+            PesticideMasterIndex = 0;
         }
 
         /// <summary>
@@ -497,6 +513,8 @@ namespace WorkTaskApp.ViewModels
             }
             WorkerMasters = new ObservableCollection<WorkerMaster>(DataBaseManager.DBManager.GetWorkerMasters());
             RegisterWorker = new WorkerMaster();
+
+            //@TODO DB更新のタイミングで保持している内容を変更する
         }
 
         /// <summary>
@@ -511,6 +529,8 @@ namespace WorkTaskApp.ViewModels
             }
             WorkerMasters = new ObservableCollection<WorkerMaster>(DataBaseManager.DBManager.GetWorkerMasters());
             RegisterWorker = new WorkerMaster();
+
+            //@TODO DB更新のタイミングで保持している内容を変更する
         }
     }
 }
