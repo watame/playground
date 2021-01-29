@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Sqlite3Service } from "../sqlite3.service";
 import { FlatpickrOptions } from "ng2-flatpickr";
 import Japanese from "flatpickr/dist/l10n/ja.js";
 
@@ -30,7 +31,11 @@ export class DailyInputComponent implements OnInit {
     time_24hr: true
   };
 
-  constructor() {}
+  constructor(private sqlite: Sqlite3Service) {}
 
   ngOnInit() {}
+
+  dbtest() {
+    this.sqlite.test();
+  }
 }
