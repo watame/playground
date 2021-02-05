@@ -1,8 +1,33 @@
 use csv::ReaderBuilder;
 use serde::Deserialize;
-use std::cmp::PartialEq;
+use std::cmp::{Ordering, PartialEq};
 use std::error::Error;
 use std::path::Path;
+
+/// sort-order-test.csv読み込み用Struct
+#[derive(Debug, Deserialize, PartialEq)]
+struct Person {
+    // No
+    no: i32,
+    // 名前
+    name: String,
+    // 年齢
+    age: i32,
+    // 職業
+    job: String,
+}
+impl PartialOrd for Person {
+    fn partial_cmp(&self, other: &Person) -> Option<Ordering> {
+        Some(
+            // age -> name -> job -> no の優先度で比較を行う
+            self.age
+                .cmp(&other.age)
+                .then(self.name.cmp(&other.name))
+                .then(self.job.cmp(&other.job))
+                .then(self.no.cmp(&other.no)),
+        )
+    }
+}
 
 /// annual-enterprise-survey-2019-financial-year-provisional-size-bands-csv読み込み用の構造体
 /// フィールドはcsvで定義されているカラム名をそのまま利用して定義
@@ -20,22 +45,43 @@ struct Survey {
     unit: String,
 }
 
-/// CSV読み込みとパースを行う
-fn target_csv_to_parse_struct(target_file_path: &Path) -> Result<Vec<Survey>, Box<dyn Error>> {
+/// CSVファイルを読み込み、各行をTのStructにパースしたVectorを生成する
+///
+/// ## Arguments
+/// * target_csv_file_path : 読み込み対象のCSVファイルへのフルパス
+///
+/// ## Example
+/// ```
+/// #[derive(Deserialize)] // Genericsの型として指定するStructはDeserialize必須
+/// struct Person {
+///     no: i32,
+///     name: String,
+///     age: i32,
+///     job: String,
+/// }
+///
+/// let person_list: Vec<Person> = target_csv_to_parse_struct<Person>(Path::new("./test.csv")).unwrap();
+/// ```
+/// 
+/// ## Reference site
+/// https://stackoverflow.com/questions/62479410/rust-how-to-restrict-type-parameters-for-derived-traits
+fn target_csv_to_parse_struct<T>(target_csv_file_path: &Path) -> Result<Vec<T>, Box<dyn Error>>
+where
+    T: serde::de::DeserializeOwned, // Deserializeを実装している型を指定
+{
     // 引数のパスを読み込みデリミタ','で分割したストリームを取得
     let mut reader = ReaderBuilder::new()
         .delimiter(b',')
-        .from_path(target_file_path)?;
+        .from_path(target_csv_file_path)?;
 
-    let mut survey_list: Vec<Survey> = Vec::new();
-    // データを1行ずつ読み込み、structにパースする
+    let mut list: Vec<T> = Vec::new();
+    // データを1行ずつ読み込み、structにパースしてVectorに格納する
     for result in reader.deserialize() {
-        let record: Survey = result?;
-        //        println!("{:?}", record);
-        survey_list.push(record);
+        let record: T = result?;
+        list.push(record);
     }
 
-    Ok(survey_list)
+    Ok(list)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -44,7 +90,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let target_path = Path::new("./rsc/").join(FILE_NAME);
 
     // csvファイルの読み込み
-    let mut survey_list_sort_by = target_csv_to_parse_struct(&target_path)?;
+    let mut survey_list_sort_by: Vec<Survey> = target_csv_to_parse_struct(&target_path)?;
     survey_list_sort_by.sort_by(|a, b| {
         a.value
             .cmp(&b.value)
@@ -52,7 +98,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     });
 
     // csvファイルの読み込み
-    let mut survey_list_is_sorted_by = target_csv_to_parse_struct(&target_path)?;
+    let mut survey_list_is_sorted_by: Vec<Survey> = target_csv_to_parse_struct(&target_path)?;
     survey_list_is_sorted_by.sort_by_key(|a| {
         // タプルで比較順を指定する
         // 参考：https://users.rust-lang.org/t/solved-advanced-sort-on-vector-of-slice/13477/9
