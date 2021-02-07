@@ -19,7 +19,7 @@ struct Person {
 impl PartialOrd for Person {
     /// Personオブジェクトの比較を行う
     /// age -> name -> job -> no の優先度で比較を行う
-    /// 
+    ///
     /// ## Arguments
     /// * other : Personオブジェクトの参照
     fn partial_cmp(&self, other: &Person) -> Option<Ordering> {
@@ -66,7 +66,7 @@ struct Survey {
 ///
 /// let person_list: Vec<Person> = target_csv_to_parse_struct<Person>(Path::new("./test.csv")).unwrap();
 /// ```
-/// 
+///
 /// ## Reference site
 /// https://stackoverflow.com/questions/62479410/rust-how-to-restrict-type-parameters-for-derived-traits
 fn target_csv_to_parse_struct<T>(target_csv_file_path: &Path) -> Result<Vec<T>, Box<dyn Error>>
@@ -266,5 +266,51 @@ mod tests {
         assert_eq!(false, survey_a == diff_value);
         assert_eq!(false, survey_a == diff_unit);
         assert_eq!(false, survey_a == diff_all);
+    }
+
+    #[test]
+    fn test_is_csv_sorted_by_define_priority_normal() {
+        const FILE_NAME: &str = "sort-order-test_sorted.csv";
+        let target_path = Path::new("./test/normal").join(FILE_NAME);
+
+        // csvファイルの読み込み
+        let person_sorted_csv: Vec<Person> = target_csv_to_parse_struct(&target_path).unwrap();
+
+        // テスト結果格納用
+        let mut result = true;
+        // Window(2)を利用することで、2要素ずつのイテレータを取得する
+        // 前の値も含めてforループを回す
+        for person_tuple in person_sorted_csv.windows(2) {
+            println!("{:?}", person_tuple);
+            // 定義した優先度で各フィールドの比較処理を行い、1つ前の要素が大きければエラーとする
+            if person_tuple[0] > person_tuple[1] {
+                result = false;
+                break; 
+            }
+        }
+        assert!(result);
+    }
+
+    #[test]
+    fn test_is_csv_sorted_by_define_priority_error() {
+        const FILE_NAME: &str = "sort-order-test_sorted.csv";
+        let target_path = Path::new("./test/error").join(FILE_NAME);
+
+        // csvファイルの読み込み
+        let person_sorted_csv: Vec<Person> = target_csv_to_parse_struct(&target_path).unwrap();
+
+        // テスト結果格納用
+        let mut result = true;
+        // Window(2)を利用することで、2要素ずつのイテレータを取得する
+        // 前の値も含めてforループを回す
+        for person_tuple in person_sorted_csv.windows(2) {
+            println!("{:?}", person_tuple);
+            // 定義した優先度で各フィールドの比較処理を行い、1つ前の要素が大きければエラーとする
+            if person_tuple[0] > person_tuple[1] {
+                result = false;
+                break; 
+            }
+        }
+        assert_eq!(false, result);
     }
 }
