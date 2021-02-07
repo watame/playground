@@ -17,9 +17,13 @@ struct Person {
     job: String,
 }
 impl PartialOrd for Person {
+    /// Personオブジェクトの比較を行う
+    /// age -> name -> job -> no の優先度で比較を行う
+    /// 
+    /// ## Arguments
+    /// * other : Personオブジェクトの参照
     fn partial_cmp(&self, other: &Person) -> Option<Ordering> {
         Some(
-            // age -> name -> job -> no の優先度で比較を行う
             self.age
                 .cmp(&other.age)
                 .then(self.name.cmp(&other.name))
