@@ -1,6 +1,10 @@
+# YoutubeURL
+* https://youtu.be/cdXQHnFqtYc
+
 # 今までああ書いてたアレ、これからはこう書けそう
 登壇者：よしこ
-* ユースケースとしてBefore/Afterを紹介する
+ユースケースとしてBefore/Afterを紹介する
+
 ## サポート環境次第で使えそうなもの
 ### CSS
 #### gap
@@ -50,6 +54,9 @@ cssのtransformプロパティが独立するようになった
 -> プライバシーにも配慮されている
 chromeでは100以降でこちらの関数に移動していっている
 
+## スライドのURL
+* https://yoshiko-pg.github.io/slides/20220325-uit/uit-meetup.pdf
+
 # デザインシステムのa11y対応に役立つ新しいWebStandard
 登壇者：Alan
 a11y = アクセシビリティ
@@ -89,6 +96,9 @@ WCAG2.1の基準に当てはめたコントラストを設定できるので、W
 Mediaクエリのコンテナ版
 よりResponsiveなデザインを作れる
 -> これにより特定のサイズでは画像を表示しない等、出来るようになる
+
+## スライドのURL
+* https://speakerdeck.com/line_developers/useful-new-web-standards-for-a11y-in-design-systems
 
 # JavaScriptの進化で変わる身近なコーディング習慣
 登壇者：uhyo
@@ -151,6 +161,9 @@ using const が使える
 ## まとめ
 JavaScriptの進化に伴って常識は変化する
 今の「仕方ない」は未来の「古い」なのでアップデートを継続していこう
+
+## スライドのURL
+* https://speakerdeck.com/line_developers/how-your-familiar-javascript-coding-techniques-will-change-in-the-near-future
 
 # フリートーク
 * フロントエンドエンジニアの求められる知識が変わっている中で、どういう風に知識を付けていけばよいのか、思っていることがあれば教えてほしい
